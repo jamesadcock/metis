@@ -1,0 +1,48 @@
+{
+  "name": "js-neura",
+  "version": "0.0.1",
+  "description": "A node machine learning library that focuses on usability and efficacy",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint:check": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write .",
+    "test": "jest src/lib",
+    "tsc": "tsc",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jamesadcock/js-neura.git"
+  },
+  "keywords": [
+    "machine",
+    "learning",
+    "AI",
+    "neural",
+    "network",
+    "artifical",
+    "intelligence",
+    "ML"
+  ],
+  "author": "James Adcock",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/jamesadcock/js-neura/issues"
+  },
+  "homepage": "https://github.com/jamesadcock/js-neura#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.1",
+    "eslint": "^8.56.0",
+    "jest-mock-extended": "^3.0.5",
+    "prettier": "^3.1.1",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.3.3",
+    "husky": "^8.0.0"
+  }
+}
