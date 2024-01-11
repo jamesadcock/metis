@@ -1,1 +1,1 @@
-export declare const singleLayerPerceptron: () => number;
+export declare const singleLayerPerceptron: () => 0 | 1;
