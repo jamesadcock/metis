@@ -3,5 +3,5 @@
 
 npm run tsc
 npm run lint:check
-npm run prettier:check
+npm run prettier:write
 npm test
