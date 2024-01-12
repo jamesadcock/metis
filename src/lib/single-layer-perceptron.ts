@@ -14,66 +14,98 @@ export interface Feature {
   target: number;
 }
 
-export const singleLayerPerceptron = ({
-  bias,
-  features,
-  weights,
-  learningRate,
-  epochs,
-}: SingleLayerPerceptronProps) => {
-  let i = 0;
-  let averageLoss: number;
-  while (i < epochs) {
-    const loss = features.map((feature) => {
-      const pred = predict(feature, weights, bias);
-      const distance = lossFunction(feature.target, pred);
+export class SingleLayerPerceptron {
+  private bias: number;
+  private features: Feature[];
+  private weights: number[];
+  private learningRate: number;
+  private epochs: number;
+  private isTrained: boolean = false;
 
-      weights = weights.map((weight, index) => {
-        return updateWeight(
-          weight,
-          pred,
-          feature.params[index],
-          learningRate,
-          feature.target,
-        );
-      });
-
-      bias = updateBias(bias, pred, learningRate, feature.target);
-      return distance;
-    });
-
-    averageLoss = mean(loss);
-    i++;
+  constructor({
+    bias,
+    features,
+    weights,
+    learningRate,
+    epochs,
+  }: SingleLayerPerceptronProps) {
+    this.bias = bias;
+    this.features = features;
+    this.weights = weights;
+    this.learningRate = learningRate;
+    this.epochs = epochs;
   }
 
-  return { averageLoss, weights, bias };
-};
+  public train() {
+    let i = 0;
+    let averageLoss: number;
+    while (i < this.epochs) {
+      const loss = this.features.map((feature) => {
+        const pred = this.predict(feature);
+        const distance = lossFunction(feature.target, pred);
 
-const updateWeight = (
-  oldWeight: number,
-  prediction: number,
-  input: number,
-  learningRate: number,
-  target: number,
-) => {
-  return oldWeight + learningRate * (target - prediction) * input;
-};
+        this.weights = this.weights.map((weight, index) => {
+          return this.updateWeight(
+            weight,
+            pred,
+            feature.params[index],
+            this.learningRate,
+            feature.target,
+          );
+        });
 
-const updateBias = (
-  oldBias: number,
-  prediction: number,
-  learningRate: number,
-  target: number,
-) => {
-  return oldBias + learningRate * (target - prediction);
-};
+        this.bias = this.updateBias(
+          this.bias,
+          pred,
+          this.learningRate,
+          feature.target,
+        );
+        return distance;
+      });
 
-const predict = (feature: Feature, weights: number[], bias: number) => {
-  const weightedSum =
-    feature.params
-      .map((num, index) => num * weights[index])
-      .reduce((accumulator, currentValue) => accumulator + currentValue, 0) +
-    bias;
+      averageLoss = mean(loss);
+      i++;
+    }
 
-  return sigmoid(weightedSum);
-};
+    this.isTrained = true;
+    return { averageLoss, weights: this.weights, bias: this.bias };
+  }
+
+  public predictFeature(feature: Feature) {
+    if (!this.isTrained) {
+      throw new Error("Model is not trained yet");
+    }
+
+    const result = this.predict(feature);
+    return result > 0.5 ? 1 : 0;
+  }
+
+  private predict(feature: Feature) {
+    const weightedSum =
+      feature.params
+        .map((num, index) => num * this.weights[index])
+        .reduce((accumulator, currentValue) => accumulator + currentValue, 0) +
+      this.bias;
+
+    return sigmoid(weightedSum);
+  }
+
+  private updateWeight = (
+    weight: number,
+    prediction: number,
+    feature: number,
+    learningRate: number,
+    target: number,
+  ) => {
+    return weight + learningRate * (target - prediction) * feature;
+  };
+
+  private updateBias = (
+    bias: number,
+    prediction: number,
+    learningRate: number,
+    target: number,
+  ) => {
+    return bias + learningRate * (target - prediction);
+  };
+}
