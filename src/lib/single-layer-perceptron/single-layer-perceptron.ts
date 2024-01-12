@@ -1,4 +1,4 @@
-import { sigmoid, crossEntropyLoss as lossFunction, mean } from "./functions";
+import { sigmoid, crossEntropyLoss as lossFunction, mean } from "../functions/functions";
 
 export interface SingleLayerPerceptronProps {
   features: Feature[];
