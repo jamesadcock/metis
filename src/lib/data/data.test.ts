@@ -18,9 +18,9 @@ describe("data", () => {
           { params: [5.2, 4.1, 1.5, 0.1], target: 0 },
         ],
         null,
-        2
+        2,
       ),
-      "utf8"
+      "utf8",
     );
   });
 });
