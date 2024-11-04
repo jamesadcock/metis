@@ -15,7 +15,7 @@ describe("sigmoid", () => {
 });
 
 describe("cross entropy loss", () => {
-  it.each([[0, 0.68, 0.49]])(
+  it.each([[0, 0.68, 1.14]])(
     "A target of %s with a prediction of %s results in a loss of %s",
     (target: number, prediction: number, output: number) => {
       const result = crossEntropyLoss(target, prediction);

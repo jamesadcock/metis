@@ -36,13 +36,13 @@ export class SingleLayerPerceptron {
     let averageLoss: number;
     while (i < this.epochs) {
       const loss = this.features.map((feature) => {
-        const pred = this.predict(feature.params);
-        const distance = lossFunction(feature.target, pred);
+        const prediction = this.predict(feature.params);
+        const distance = lossFunction(feature.target, prediction);
 
         this.weights = this.weights.map((weight, index) => {
           return this.updateWeight(
             weight,
-            pred,
+            prediction,
             feature.params[index],
             this.learningRate,
             feature.target,
@@ -51,7 +51,7 @@ export class SingleLayerPerceptron {
 
         this.bias = this.updateBias(
           this.bias,
-          pred,
+          prediction,
           this.learningRate,
           feature.target,
         );

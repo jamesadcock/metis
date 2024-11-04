@@ -1,6 +1,7 @@
 ![metis](image/metis.png)
 
 # Metis
+
 Metis is a machine learning library for JavaScript that focuses configurability and performance. If a graphics card is available, Metis harnesses its power to significantly improve training speed. It strives to offer an intuitive API, complemented by comprehensive and easy-to-follow documentation.
 
 ## Local Development

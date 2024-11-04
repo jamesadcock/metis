@@ -7,8 +7,8 @@ export const crossEntropyLoss = (
   prediction: number,
 ): number => {
   return -(
-    target * Math.log10(prediction) +
-    (1 - target) * Math.log10(1 - prediction)
+    target * Math.log(prediction) +
+    (1 - target) * Math.log(1 - prediction)
   );
 };
 
