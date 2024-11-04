@@ -1,5 +1,5 @@
 {
-  "name": "js-neura",
+  "name": "metis",
   "version": "0.0.1",
   "description": "A node machine learning library that focuses on usability and efficacy",
   "main": "index.js",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jamesadcock/js-neura.git"
+    "url": "git+https://github.com/jamesadcock/metis.git"
   },
   "keywords": [
     "machine",
@@ -30,9 +30,9 @@
   "author": "James Adcock",
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/jamesadcock/js-neura/issues"
+    "url": "https://github.com/jamesadcock/metis/issues"
   },
-  "homepage": "https://github.com/jamesadcock/js-neura#readme",
+  "homepage": "https://github.com/jamesadcock/metis#readme",
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "@types/node": "^20.11.0",

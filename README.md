@@ -1,6 +1,7 @@
-# JsNeura
+![metis](image/metis.png)
 
-JsNeura is a machine learning library for JavaScript that focuses configurability and performance. If a graphics card is available, JsNeura harnesses its power to significantly improve training speed. It strives to offer an intuitive API, complemented by comprehensive and easy-to-follow documentation.
+# Metis
+Metis is a machine learning library for JavaScript that focuses configurability and performance. If a graphics card is available, Metis harnesses its power to significantly improve training speed. It strives to offer an intuitive API, complemented by comprehensive and easy-to-follow documentation.
 
 ## Local Development
 
@@ -21,7 +22,7 @@ A single-layer perceptron is a type of artificial neural network and the simples
 
 **Learning Process:** The perceptron learns by adjusting the weights based on the errors in predictions. During training, it uses these errors to make small adjustments to the weights.
 
-**Limitations:**   A single-layer perceptron is only capable of learning linearly separable patterns. This means they can only classify data that can be separated into classes with a linear boundary. They are not capable of solving problems where the data is not linearly separable, like the XOR problem.
+**Limitations:** A single-layer perceptron is only capable of learning linearly separable patterns. This means they can only classify data that can be separated into classes with a linear boundary. They are not capable of solving problems where the data is not linearly separable, like the XOR problem.
 
 **Uses:** Despite its limitations, the single-layer perceptron is useful for simple binary classification tasks and serves as a stepping stone to more complex neural network architectures.
 
@@ -51,7 +52,6 @@ where e is Euler's number and x is the input to the function.
 
 **Smooth Gradient:** The function has a smooth gradient, avoiding sharp jumps in output values. This smoothness is beneficial during the optimization phase of training a neural network.
 
-
 **Saturation and Vanishing Gradient Problem:** The sigmoid function has regions where the function flattens out near 0 and 1. In these regions, the gradient is very small, leading to the vanishing gradient problem during neural network training. This can slow down or even stop the network from further learning.
 
 **Centered at 0.5:** The midpoint output of the sigmoid function is 0.5, not 0, which can sometimes be a disadvantage in neural networks as it leads to outputs that are not zero-centered.
@@ -64,7 +64,7 @@ Cross entropy loss, also known as log loss, is a widely used loss function in ma
 
 Cross entropy loss increases as the predicted probability diverges from the actual label, making it an effective measure for evaluating the accuracy of a classifier.
 
-*Here's a more detailed look at cross entropy loss:*
+_Here's a more detailed look at cross entropy loss:_
 
 Concept: The concept of cross entropy originates from information theory, where it is used to quantify the difference between two probability distributions.
 
@@ -74,9 +74,9 @@ Formula: For binary classification, the cross entropy loss can be defined as:
 
 Where:
 
-* C: is the total number of classes.
-* yi: is the true label for class (1 for the correct class, 0 otherwise).
-* yi^: is the predicted probability for each class.
+- C: is the total number of classes.
+- yi: is the true label for class (1 for the correct class, 0 otherwise).
+- yi^: is the predicted probability for each class.
 
 **Interpretation:** The loss is low (near zero) when the model's prediction is close to the actual label, and it's high when the prediction is far from the actual label.
 
