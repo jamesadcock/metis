@@ -2,7 +2,7 @@
 
 # Metis
 
-Metis is a machine learning library for JavaScript that focuses configurability and performance. If a graphics card is available, Metis harnesses its power to significantly improve training speed. It strives to offer an intuitive API, complemented by comprehensive and easy-to-follow documentation.
+Metis is a machine learning library built in TypeScript, crafted to make the world of machine learning accessible and engaging. Designed with learners in mind, Metis unveils the core concepts of machine learning without relying on external libraries, giving you a hands-on understanding of how everything truly works. Each function includes clear explanations, demystifying the "magic" behind machine learning and empowering you to build a strong foundation in this transformative field!
 
 ## Local Development
 
