@@ -9,7 +9,15 @@ export class Matrix {
     return this.data;
   }
 
-  public multiply(matrix: Matrix): number[][] {
+  get rows() {
+    return this.data.length;
+  }
+
+  get columns() {
+    return this.data[0].length;
+  }
+
+  public multiplyMatrices(matrix: Matrix): Matrix {
     if (this.data[0].length !== matrix.data.length) {
       throw new Error("Invalid matrix size");
     }
@@ -24,10 +32,21 @@ export class Matrix {
         }
       }
     }
-    return result;
+    return new Matrix(result);
   }
 
-  public transpose(): number[][] {
+  public multiply(multiplier: number): Matrix {
+    const result: number[][] = [];
+    for (let i = 0; i < this.data.length; i++) {
+      result[i] = [];
+      for (let j = 0; j < this.data[0].length; j++) {
+        result[i][j] = this.data[i][j] * multiplier;
+      }
+    }
+    return new Matrix(result);
+  }
+
+  public transpose(): Matrix {
     const result: number[][] = [];
     for (let i = 0; i < this.data[0].length; i++) {
       result[i] = [];
@@ -35,6 +54,56 @@ export class Matrix {
         result[i][j] = this.data[j][i];
       }
     }
-    return result;
+    return new Matrix(result);
+  }
+
+  public subtract(matrix: Matrix): Matrix {
+    if (
+      this.data.length !== matrix.data.length ||
+      this.data[0].length !== matrix.data[0].length
+    ) {
+      throw new Error("Invalid matrix size");
+    }
+
+    const result: number[][] = [];
+    for (let i = 0; i < this.data.length; i++) {
+      result[i] = [];
+      for (let j = 0; j < this.data[0].length; j++) {
+        result[i][j] = this.data[i][j] - matrix.data[i][j];
+      }
+    }
+    return new Matrix(result);
+  }
+
+  public squared(): Matrix {
+    const result: number[][] = [];
+    for (let i = 0; i < this.data.length; i++) {
+      result[i] = [];
+      for (let j = 0; j < this.data[0].length; j++) {
+        result[i][j] = Math.pow(this.data[i][j], 2);
+      }
+    }
+    return new Matrix(result);
+  }
+
+  public mean(): number {
+    let sum = 0;
+    for (let i = 0; i < this.data.length; i++) {
+      for (let j = 0; j < this.data[0].length; j++) {
+        sum += this.data[i][j];
+      }
+    }
+    return sum / (this.data.length * this.data[0].length);
+  }
+
+  public divide(divisor: number): Matrix {
+    const result: number[][] = [];
+    for (let i = 0; i < this.data.length; i++) {
+      result[i] = [];
+      for (let j = 0; j < this.data[0].length; j++) {
+        result[i][j] = this.data[i][j] / divisor;
+      }
+    }
+    return new Matrix(result);
   }
 }

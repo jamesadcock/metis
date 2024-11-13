@@ -4,7 +4,7 @@ export const sigmoid = (input: number): number => {
 
 export const crossEntropyLoss = (
   target: number,
-  prediction: number,
+  prediction: number
 ): number => {
   return -(
     target * Math.log(prediction) +
