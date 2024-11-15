@@ -6,7 +6,9 @@ export class LinearRegression {
   }
 
   public gradientDescent(features: Matrix, weights: Matrix, labels: Matrix) {
-    const predictionErrors = this.predict(features, weights).subtract(labels);
+    const predictionErrors = this.predict(features, weights).subtractMatrices(
+      labels
+    );
     const featuresTransposed = features.transpose();
     return featuresTransposed
       .multiplyMatrices(predictionErrors)
@@ -15,7 +17,10 @@ export class LinearRegression {
   }
 
   private loss(features: Matrix, weights: Matrix, labels: Matrix) {
-    return this.predict(features, weights).subtract(labels).squared().mean();
+    return this.predict(features, weights)
+      .subtractMatrices(labels)
+      .squared()
+      .mean();
   }
 
   public train(
@@ -28,7 +33,7 @@ export class LinearRegression {
       Array.from({ length: features.columns }, () => [0])
     );
     for (let i = 0; i < epochs; i++) {
-      weights = weights.subtract(
+      weights = weights.subtractMatrices(
         this.gradientDescent(features, weights, labels).multiply(learningRate)
       );
     }

@@ -44,7 +44,7 @@ export class Data {
         });
 
         features.push(values.slice(0, -1));
-        labels.push([values[values.length -1]]);
+        labels.push([values[values.length - 1]]);
       });
 
       const featuresMatrix = new Matrix(features);

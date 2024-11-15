@@ -1,3 +1,4 @@
+import { describe } from "node:test";
 import { Matrix } from "./matrix";
 
 describe("get", () => {
@@ -126,13 +127,52 @@ describe("transpose", () => {
   });
 });
 
-describe("subtract", () => {
+describe("add", () => {
+  it("should add (5 x 1) matrix", () => {
+    const matrixA = new Matrix([[1], [3], [5], [7], [9]]);
+    const matrixB = new Matrix([[2], [4], [6], [8], [10]]);
+    const result = matrixA.addMatrices(matrixB);
+    expect(result.get()).toEqual([[3], [7], [11], [15], [19]]);
+  });
+
+  it("should add (2 x 2) matrix", () => {
+    const matrixA = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+    const matrixB = new Matrix([
+      [2, 1],
+      [4, 3],
+    ]);
+    const result = matrixA.addMatrices(matrixB);
+    expect(result.get()).toEqual([
+      [3, 3],
+      [7, 7],
+    ]);
+  });
+
+  it("should throw error when add (2 x 2) and (2 x 3) matrix", () => {
+    const matrixA = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+    const matrixB = new Matrix([
+      [2, 1, 3],
+      [4, 3, 5],
+    ]);
+    expect(() => matrixA.addMatrices(matrixB)).toThrowError(
+      "Invalid matrix size"
+    );
+  });
+});
+
+describe("subtractMatrices", () => {
   it("should subtract (5 x 1) matrix", () => {
     const matrixA = new Matrix([[1], [3], [5], [7], [9]]);
 
     const matrixB = new Matrix([[2], [4], [6], [8], [10]]);
 
-    const result = matrixA.subtract(matrixB);
+    const result = matrixA.subtractMatrices(matrixB);
     expect(result.get()).toEqual([[-1], [-1], [-1], [-1], [-1]]);
   });
 
@@ -147,7 +187,7 @@ describe("subtract", () => {
       [4, 3],
     ]);
 
-    const result = matrixA.subtract(matrixB);
+    const result = matrixA.subtractMatrices(matrixB);
     expect(result.get()).toEqual([
       [-1, 1],
       [-1, 1],
@@ -165,7 +205,24 @@ describe("subtract", () => {
       [4, 3, 5],
     ]);
 
-    expect(() => matrixA.subtract(matrixB)).toThrowError("Invalid matrix size");
+    expect(() => matrixA.subtractMatrices(matrixB)).toThrowError(
+      "Invalid matrix size"
+    );
+  });
+});
+
+describe("subtract", () => {
+  it("should subtract (2 x 2) matrix by 2", () => {
+    const matrix = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+
+    const result = matrix.subtract(2);
+    expect(result.get()).toEqual([
+      [-1, 0],
+      [1, 2],
+    ]);
   });
 });
 
@@ -204,6 +261,87 @@ describe("divide", () => {
     expect(result.get()).toEqual([
       [1, 2],
       [3, 4],
+    ]);
+  });
+});
+
+describe("applyFunction", () => {
+  it("should apply function to matrix", () => {
+    const matrix = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+
+    const result = matrix.applyFunction((input) => input * 2);
+    expect(result.get()).toEqual([
+      [2, 4],
+      [6, 8],
+    ]);
+  });
+
+  it("apply 1 minus input function", () => {
+    const matrix = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+
+    const result = matrix.applyFunction((input) => 1 - input);
+    expect(result.get()).toEqual([
+      [0, -1],
+      [-2, -3],
+    ]);
+  });
+});
+
+describe("elementWiseMultiplication", () => {
+  it("should multiply two matrices element-wise", () => {
+    const matrixA = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+
+    const matrixB = new Matrix([
+      [2, 3],
+      [4, 5],
+    ]);
+
+    const result = matrixA.elementWiseMultiplication(matrixB);
+    expect(result.get()).toEqual([
+      [2, 6],
+      [12, 20],
+    ]);
+  });
+
+  it("should throw error when multiplying two matrices of different sizes", () => {
+    const matrixA = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+
+    const matrixB = new Matrix([
+      [2, 3, 4],
+      [4, 5, 6],
+    ]);
+
+    expect(() => matrixA.elementWiseMultiplication(matrixB)).toThrowError(
+      "Invalid matrix size"
+    );
+  });
+});
+
+describe("addColumn", () => {
+  it("should add a column to a matrix", () => {
+    const matrix = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+
+    const column = [5, 6];
+
+    const result = matrix.addColumn(column);
+    expect(result.get()).toEqual([
+      [1, 2, 5],
+      [3, 4, 6],
     ]);
   });
 });

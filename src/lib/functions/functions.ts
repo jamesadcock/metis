@@ -1,18 +1,18 @@
+import { Matrix } from "./matrix";
+
 export const sigmoid = (input: number): number => {
   return 1 / (1 + Math.exp(-input));
 };
 
-export const crossEntropyLoss = (
-  target: number,
-  prediction: number
-): number => {
-  return -(
-    target * Math.log(prediction) +
-    (1 - target) * Math.log(1 - prediction)
+export const logLoss = (labels: Matrix, predictions: Matrix) => {
+  const firstTerm = labels.elementWiseMultiplication(
+    predictions.applyFunction(Math.log)
   );
-};
 
-export const mean = (numbers: number[]) => {
-  const sum = numbers.reduce((a, b) => a + b, 0);
-  return sum / numbers.length || 0;
+  const secondTerm = predictions
+    .applyFunction((x) => 1 - x)
+    .applyFunction(Math.log)
+    .elementWiseMultiplication(labels.applyFunction((x) => 1 - x));
+
+  return firstTerm.addMatrices(secondTerm).multiply(-1).mean();
 };

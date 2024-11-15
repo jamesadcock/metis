@@ -1,106 +1,67 @@
-import {
-  sigmoid,
-  crossEntropyLoss as lossFunction,
-  mean,
-} from "../functions/functions";
-
-export interface SingleLayerPerceptronProps {
-  features: Feature[];
-  learningRate: number;
-  epochs: number;
-}
-
-export interface Feature {
-  params: number[];
-  target: number;
-}
+import { logLoss, sigmoid } from "../functions/functions";
+import { Matrix } from "../functions/matrix";
 
 export class SingleLayerPerceptron {
-  private bias: number;
-  private features: Feature[];
-  private weights: number[];
-  private learningRate: number;
-  private epochs: number;
-  private isTrained: boolean = false;
+  public classify(features: Matrix, weights: Matrix) {
+    const bias = Array.from({ length: features.rows }, () => 1);
+    const featuresWithBias = features.addColumn(bias);
 
-  constructor({ features, learningRate, epochs }: SingleLayerPerceptronProps) {
-    this.features = features;
-    this.learningRate = learningRate;
-    this.epochs = epochs;
-    this.bias = 0;
-    this.weights = Array.from({ length: features[0].params.length }, () => 0);
+    return this.forward(featuresWithBias, weights).applyFunction((x) =>
+      Math.round(x)
+    );
   }
 
-  public train() {
-    let i = 0;
-    let averageLoss: number;
-    while (i < this.epochs) {
-      const loss = this.features.map((feature) => {
-        const prediction = this.predict(feature.params);
-        const distance = lossFunction(feature.target, prediction);
+  public train(
+    features: Matrix,
+    labels: Matrix,
+    learningRate: number,
+    epochs: number,
+    showLoss = false
+  ) {
+    const bias = Array.from({ length: features.rows }, () => 1);
+    const featuresWithBias = features.addColumn(bias);
 
-        this.weights = this.weights.map((weight, index) => {
-          return this.updateWeight(
-            weight,
-            prediction,
-            feature.params[index],
-            this.learningRate,
-            feature.target,
-          );
-        });
+    let weights = new Matrix(
+      Array.from({ length: featuresWithBias.columns }, () => [0])
+    );
 
-        this.bias = this.updateBias(
-          this.bias,
-          prediction,
-          this.learningRate,
-          feature.target,
-        );
-        return distance;
-      });
-
-      averageLoss = mean(loss);
-      i++;
+    for (let i = 0; i < epochs; i++) {
+      if (showLoss) {
+        this.showLoss(featuresWithBias, labels, weights, i);
+      }
+      weights = weights.subtractMatrices(
+        this.gradient(featuresWithBias, labels, weights).multiply(learningRate)
+      );
     }
 
-    this.isTrained = true;
-    return { averageLoss, weights: this.weights, bias: this.bias };
+    return weights;
   }
 
-  public predictFeature(params: number[]) {
-    if (!this.isTrained) {
-      throw new Error("Model is not trained yet");
-    }
-
-    const result = this.predict(params);
-    return result > 0.5 ? 1 : 0;
+  private forward(features: Matrix, weights: Matrix) {
+    return features.multiplyMatrices(weights).applyFunction(sigmoid);
   }
 
-  private predict(params: number[]) {
-    const weightedSum =
-      params
-        .map((num, index) => num * this.weights[index])
-        .reduce((accumulator, currentValue) => accumulator + currentValue, 0) +
-      this.bias;
-
-    return sigmoid(weightedSum);
+  private gradient(features: Matrix, labels: Matrix, weights: Matrix) {
+    const predictionErrors = this.forward(features, weights).subtractMatrices(
+      labels
+    );
+    return features
+      .transpose()
+      .multiplyMatrices(predictionErrors)
+      .divide(features.rows);
   }
 
-  private updateWeight = (
-    weight: number,
-    prediction: number,
-    feature: number,
-    learningRate: number,
-    target: number,
-  ) => {
-    return weight + learningRate * (target - prediction) * feature;
-  };
-
-  private updateBias = (
-    bias: number,
-    prediction: number,
-    learningRate: number,
-    target: number,
-  ) => {
-    return bias + learningRate * (target - prediction);
-  };
+  private showLoss(
+    features: Matrix,
+    labels: Matrix,
+    weights: Matrix,
+    i: number
+  ) {
+    console.log(
+      `Iterations ${i} => loss: ${logLoss(
+        labels,
+        this.forward(features, weights)
+      )}`
+    );
+  }
 }

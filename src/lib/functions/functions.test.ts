@@ -1,4 +1,5 @@
-import { crossEntropyLoss, mean, sigmoid } from "./functions";
+import { logLoss, sigmoid } from "./functions";
+import { Matrix } from "./matrix";
 
 describe("sigmoid", () => {
   it.each([
@@ -10,30 +11,22 @@ describe("sigmoid", () => {
     (input: number, output: number) => {
       const result = sigmoid(input);
       expect(result.toFixed(2)).toEqual(output.toFixed(2));
-    },
+    }
   );
 });
 
-describe("cross entropy loss", () => {
-  it.each([[0, 0.68, 1.14]])(
-    "A target of %s with a prediction of %s results in a loss of %s",
-    (target: number, prediction: number, output: number) => {
-      const result = crossEntropyLoss(target, prediction);
-      expect(result.toFixed(2)).toEqual(output.toFixed(2));
-    },
-  );
-});
+describe("log loss", () => {
+  it("should return the correct loss for single value", () => {
+    const targets = new Matrix([[1]]);
+    const predictions = new Matrix([[0.9]]);
+    const result = logLoss(targets, predictions);
+    expect(result).toEqual(0.10536051565782628);
+  });
 
-describe("mean", () => {
-  it.each([
-    [[1, 9], 5],
-    [[3, 3, 3], 3],
-    [[0.49, 0.18, 0.55, 0.18], 0.35],
-  ])(
-    "The array of numbers %s should result in a mean of %s",
-    (numbers: number[], output: number) => {
-      const result = mean(numbers);
-      expect(result.toFixed(2)).toEqual(output.toFixed(2));
-    },
-  );
+  it("should return the correct loss for multiple values", () => {
+    const targets = new Matrix([[1], [0]]);
+    const predictions = new Matrix([[0.9], [0.4]]);
+    const result = logLoss(targets, predictions);
+    expect(result).toEqual(0.30809306971190853);
+  });
 });
