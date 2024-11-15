@@ -6,8 +6,8 @@ Metis is a machine learning library built in TypeScript, crafted to make the wor
 
 ## Documentation
 
-- [Perceptron](/docs/perceptron)
-- [Functions](/docs/functions)
+- [Perceptron](/docs/perceptron.md)
+- [Functions](/docs/functions.md)
 
 ## Local Development
 
