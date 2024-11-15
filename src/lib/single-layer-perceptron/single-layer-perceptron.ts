@@ -33,8 +33,10 @@ export class SingleLayerPerceptron {
         this.gradient(featuresWithBias, labels, weights).multiply(learningRate)
       );
     }
-
-    return weights;
+    return {
+      weights: weights,
+      loss: logLoss(labels, this.forward(featuresWithBias, weights)),
+    };
   }
 
   private forward(features: Matrix, weights: Matrix) {
@@ -55,10 +57,10 @@ export class SingleLayerPerceptron {
     features: Matrix,
     labels: Matrix,
     weights: Matrix,
-    i: number
+    iteration: number
   ) {
     console.log(
-      `Iterations ${i} => loss: ${logLoss(
+      `Iterations ${iteration} => loss: ${logLoss(
         labels,
         this.forward(features, weights)
       )}`

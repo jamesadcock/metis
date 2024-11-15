@@ -4,13 +4,13 @@ import { LinearRegression } from "./linear-regression";
 
 describe("linear-regression", () => {
   it("should return the correct data", () => {
-    const trainingData = Data.convertCsvToMatrices("test-data/pizza.csv");
+    const trainingData = Data.loadTraining("test-data/pizza.csv");
     const linearRegression = new LinearRegression();
     const weights = linearRegression.train(
       trainingData.features,
       trainingData.labels,
       0.00005,
-      100000,
+      100000
     );
     const prediction1Data = new Matrix([[6, 14, 9]]);
     const prediction2Data = new Matrix([[13, 19, 4]]);

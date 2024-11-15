@@ -1,24 +1,6 @@
-![metis](image/metis.png)
+# Functions
 
-# Metis
-
-Metis is a machine learning library built in TypeScript, crafted to make the world of machine learning accessible and engaging. Designed with learners in mind, Metis unveils the core concepts of machine learning without relying on external libraries, giving you a hands-on understanding of how everything truly works. Each function includes clear explanations, demystifying the "magic" behind machine learning and empowering you to build a strong foundation in this transformative field!
-
-## Documentation
-
-- [Perceptron](docs/perceptron)
-- [Functions](docs/functions)
-
-## Local Development
-
-- Install dependencies and run tests
-
-```
-npm i
-npm test
-```
-
-**Activation Function - Sigmoid Function**
+## Sigmoid Function
 
 A sigmoid function is a mathematical function having a characteristic "S"-shaped curve or sigmoid curve. It's widely used in machine learning, particularly in logistic regression and neural networks, due to its good properties for modeling probability and its smooth gradient. The most common example of a sigmoid function is the logistic function.
 
@@ -44,9 +26,9 @@ where e is Euler's number and x is the input to the function.
 
 In summary, the sigmoid function is a smooth, S-shaped function crucial in the early development of neural networks and logistic regression. Its ability to model probabilities and its smooth gradient are significant advantages, but it is less used in modern deep learning due to issues like the vanishing gradient problem.
 
-**Loss Function - Cross entropy loss**
+## Log Loss
 
-Cross entropy loss, also known as log loss, is a widely used loss function in machine learning and deep learning, particularly for classification problems. It measures the performance of a classification model whose output is a probability value between 0 and 1.
+Log loss also known as cross entropy loss, also known, is a widely used loss function in machine learning and deep learning, particularly for classification problems. It measures the performance of a classification model whose output is a probability value between 0 and 1.
 
 Cross entropy loss increases as the predicted probability diverges from the actual label, making it an effective measure for evaluating the accuracy of a classifier.
 

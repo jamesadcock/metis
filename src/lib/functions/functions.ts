@@ -6,7 +6,7 @@ export const sigmoid = (input: number): number => {
 
 export const logLoss = (labels: Matrix, predictions: Matrix) => {
   const firstTerm = labels.elementWiseMultiplication(
-    predictions.applyFunction(Math.log)
+    predictions.applyFunction(Math.log),
   );
 
   const secondTerm = predictions

@@ -77,7 +77,7 @@ describe("multiplyMatrices", () => {
     const matrixB = new Matrix([[2], [4]]);
 
     expect(() => matrixA.multiplyMatrices(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });
@@ -161,7 +161,7 @@ describe("add", () => {
       [4, 3, 5],
     ]);
     expect(() => matrixA.addMatrices(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });
@@ -206,7 +206,7 @@ describe("subtractMatrices", () => {
     ]);
 
     expect(() => matrixA.subtractMatrices(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });
@@ -324,7 +324,7 @@ describe("elementWiseMultiplication", () => {
     ]);
 
     expect(() => matrixA.elementWiseMultiplication(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });

@@ -5,24 +5,6 @@ export class LinearRegression {
     return features.multiplyMatrices(weights);
   }
 
-  public gradientDescent(features: Matrix, weights: Matrix, labels: Matrix) {
-    const predictionErrors = this.predict(features, weights).subtractMatrices(
-      labels
-    );
-    const featuresTransposed = features.transpose();
-    return featuresTransposed
-      .multiplyMatrices(predictionErrors)
-      .divide(features.rows)
-      .multiply(2);
-  }
-
-  private loss(features: Matrix, weights: Matrix, labels: Matrix) {
-    return this.predict(features, weights)
-      .subtractMatrices(labels)
-      .squared()
-      .mean();
-  }
-
   public train(
     features: Matrix,
     labels: Matrix,
@@ -39,5 +21,23 @@ export class LinearRegression {
     }
     console.log(`squared loss=${this.loss(features, weights, labels)}`);
     return weights;
+  }
+
+  private gradientDescent(features: Matrix, weights: Matrix, labels: Matrix) {
+    const predictionErrors = this.predict(features, weights).subtractMatrices(
+      labels
+    );
+    const featuresTransposed = features.transpose();
+    return featuresTransposed
+      .multiplyMatrices(predictionErrors)
+      .divide(features.rows)
+      .multiply(2);
+  }
+
+  private loss(features: Matrix, weights: Matrix, labels: Matrix) {
+    return this.predict(features, weights)
+      .subtractMatrices(labels)
+      .squared()
+      .mean();
   }
 }
