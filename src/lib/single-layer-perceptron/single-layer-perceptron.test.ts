@@ -8,19 +8,19 @@ describe("iris", () => {
       trainingData.features,
       trainingData.labels,
       0.001,
-      10
+      10,
     );
     const result2 = perceptron.train(
       trainingData.features,
       trainingData.labels,
       0.001,
-      100
+      100,
     );
     const result3 = perceptron.train(
       trainingData.features,
       trainingData.labels,
       0.001,
-      1000
+      1000,
     );
     expect(result1.loss).toBeGreaterThan(result2.loss);
     expect(result2.loss).toBeGreaterThan(result3.loss);
@@ -32,12 +32,12 @@ describe("iris", () => {
       trainingData.features,
       trainingData.labels,
       0.001,
-      10000
+      10000,
     );
     const classificationData = Data.load("test-data/iris-test.csv");
     const results = perceptron.classify(
       classificationData.data,
-      result.weights
+      result.weights,
     );
 
     expect(results.get()[0][0]).toEqual(0);

@@ -7,7 +7,7 @@ export class SingleLayerPerceptron {
     const featuresWithBias = features.addColumn(bias);
 
     return this.forward(featuresWithBias, weights).applyFunction((x) =>
-      Math.round(x)
+      Math.round(x),
     );
   }
 
@@ -16,13 +16,13 @@ export class SingleLayerPerceptron {
     labels: Matrix,
     learningRate: number,
     epochs: number,
-    showLoss = false
+    showLoss = false,
   ) {
     const bias = Array.from({ length: features.rows }, () => 1);
     const featuresWithBias = features.addColumn(bias);
 
     let weights = new Matrix(
-      Array.from({ length: featuresWithBias.columns }, () => [0])
+      Array.from({ length: featuresWithBias.columns }, () => [0]),
     );
 
     for (let i = 0; i < epochs; i++) {
@@ -30,7 +30,7 @@ export class SingleLayerPerceptron {
         this.showLoss(featuresWithBias, labels, weights, i);
       }
       weights = weights.subtractMatrices(
-        this.gradient(featuresWithBias, labels, weights).multiply(learningRate)
+        this.gradient(featuresWithBias, labels, weights).multiply(learningRate),
       );
     }
     return {
@@ -45,7 +45,7 @@ export class SingleLayerPerceptron {
 
   private gradient(features: Matrix, labels: Matrix, weights: Matrix) {
     const predictionErrors = this.forward(features, weights).subtractMatrices(
-      labels
+      labels,
     );
     return features
       .transpose()
@@ -57,13 +57,13 @@ export class SingleLayerPerceptron {
     features: Matrix,
     labels: Matrix,
     weights: Matrix,
-    iteration: number
+    iteration: number,
   ) {
     console.log(
       `Iterations ${iteration} => loss: ${logLoss(
         labels,
-        this.forward(features, weights)
-      )}`
+        this.forward(features, weights),
+      )}`,
     );
   }
 }

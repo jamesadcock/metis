@@ -4,13 +4,13 @@
 
 A sigmoid function is a mathematical function having a characteristic "S"-shaped curve or sigmoid curve. It's widely used in machine learning, particularly in logistic regression and neural networks, due to its good properties for modeling probability and its smooth gradient. The most common example of a sigmoid function is the logistic function.
 
-![Sigmoid Function Graph](image/sigmoid-function-graph.png)
+![Sigmoid Function Graph](/docs/image/sigmoid-function-graph.png)
 
 Here are some key features of the sigmoid function:
 
 **Formula:** The standard logistic sigmoid function is defined as:
 
-![Sigmoid Function](image/sigmoid-function.png)
+![Sigmoid Function](/docs/image/sigmoid-function.png)
 
 where e is Euler's number and x is the input to the function.
 
@@ -38,7 +38,7 @@ Concept: The concept of cross entropy originates from information theory, where 
 
 Formula: For binary classification, the cross entropy loss can be defined as:
 
-![Cross Entropy Loss](image/cross-entropy-loss.png)
+![Cross Entropy Loss](/docs/image/cross-entropy-loss.png)
 
 Where:
 
