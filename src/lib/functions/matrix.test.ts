@@ -1,4 +1,3 @@
-import { describe } from "node:test";
 import { Matrix } from "./matrix";
 
 describe("get", () => {
@@ -39,7 +38,7 @@ describe("columns", () => {
 });
 
 describe("multiplyMatrices", () => {
-  it("should multiply (1 x 3) and (3 x 1) return correct result",async () => {
+  it("should multiply (1 x 3) and (3 x 1) return correct result", async () => {
     const matrixA = new Matrix([[2, 3, 5]]);
 
     const matrixB = new Matrix([[2.5], [4], [1]]);
@@ -48,7 +47,7 @@ describe("multiplyMatrices", () => {
     expect(result.get()).toEqual([[22]]);
   });
 
-  it("should multiply (4 x 3) and (3 x 2) return correct result",async () => {
+  it("should multiply (4 x 3) and (3 x 2) return correct result", async () => {
     const matrixA = new Matrix([
       [2, 3, 5],
       [11, 13, 19],
@@ -77,7 +76,7 @@ describe("multiplyMatrices", () => {
     const matrixB = new Matrix([[2], [4]]);
 
     expect(() => matrixA.multiplyMatrices(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });
@@ -161,7 +160,7 @@ describe("add", () => {
       [4, 3, 5],
     ]);
     expect(() => matrixA.addMatrices(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });
@@ -206,7 +205,7 @@ describe("subtractMatrices", () => {
     ]);
 
     expect(() => matrixA.subtractMatrices(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });
@@ -324,7 +323,7 @@ describe("elementWiseMultiplication", () => {
     ]);
 
     expect(() => matrixA.elementWiseMultiplication(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });

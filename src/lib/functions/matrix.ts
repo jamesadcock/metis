@@ -7,7 +7,7 @@ export class Matrix {
 
   public static fromTypedArray(typedData: Float64Array[]): Matrix {
     const convertedData: number[][] = Array.from(typedData, (row) =>
-      Array.from(row)
+      Array.from(row),
     );
 
     return new Matrix(convertedData);
@@ -47,7 +47,7 @@ export class Matrix {
     }
 
     const result = Array.from({ length: rowsA }, () =>
-      new Float64Array(colsB).fill(0)
+      new Float64Array(colsB).fill(0),
     );
     const matrixData = matrix.data;
 
