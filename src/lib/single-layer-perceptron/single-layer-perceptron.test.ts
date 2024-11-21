@@ -1,4 +1,5 @@
 import { Data } from "../data/data";
+import { Mnist } from "../data/mnist";
 import { SingleLayerPerceptron } from "./single-layer-perceptron";
 describe("iris", () => {
   it("should reduce the loss", () => {
@@ -8,19 +9,19 @@ describe("iris", () => {
       trainingData.features,
       trainingData.labels,
       0.001,
-      10,
+      10
     );
     const result2 = perceptron.train(
       trainingData.features,
       trainingData.labels,
       0.001,
-      100,
+      100
     );
     const result3 = perceptron.train(
       trainingData.features,
       trainingData.labels,
       0.001,
-      1000,
+      1000
     );
     expect(result1.loss).toBeGreaterThan(result2.loss);
     expect(result2.loss).toBeGreaterThan(result3.loss);
@@ -32,16 +33,67 @@ describe("iris", () => {
       trainingData.features,
       trainingData.labels,
       0.001,
-      10000,
+      10000
     );
     const classificationData = Data.load("test-data/iris-test.csv");
     const results = perceptron.classify(
       classificationData.data,
-      result.weights,
+      result.weights
     );
 
     expect(results.get()[0][0]).toEqual(0);
     expect(results.get()[1][0]).toEqual(1);
     expect(results.get()[2][0]).toEqual(0);
+  });
+});
+
+describe.skip("mnist", () => {
+  it("should reduce the loss", async () => {
+    const mnist = new Mnist();
+    const perceptron = new SingleLayerPerceptron();
+    const features = mnist.loadImages(
+      "test-data/mnist/train-images-idx3-ubyte"
+    );
+    const labels = mnist.loadTrainingLabels(
+      "test-data/mnist/train-labels-idx1-ubyte"
+    );
+    const result1 = perceptron.train(features, labels, 0.0001, 2);
+    const result2 = perceptron.train(features, labels, 0.0001, 3);
+    expect(result1.loss).toBeGreaterThan(result2.loss);
+  }, 100000);
+
+  it("should correctly predict", () => {
+    const mnist = new Mnist();
+    const perceptron = new SingleLayerPerceptron();
+    const result = perceptron.train(
+      mnist.loadImages("test-data/mnist/train-images-idx3-ubyte"),
+      mnist.loadTrainingLabels("test-data/mnist/train-labels-idx1-ubyte"),
+      0.00001,
+      200
+    );
+    const classificationData = mnist.loadImages(
+      "test-data/mnist/t10k-images-idx3-ubyte"
+    );
+
+    const classificationLabels = mnist.loadTestLabels(
+      "test-data/mnist/t10k-labels-idx1-ubyte"
+    );
+
+    const results = perceptron.classify(
+      classificationData,
+      result.weights,
+      true
+    );
+
+    let correct = 0;
+    results.get().forEach((result, i) => {
+      if (result[0] === classificationLabels.get()[i][0]) {
+        correct++;
+      }
+    });
+    console.log(
+      `Correctly Identified: ${(correct / results.get().length) * 100}%`
+    );
+    expect(classificationLabels.get()[0][0]).toEqual(7);
   });
 });

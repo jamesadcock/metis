@@ -5,6 +5,14 @@ export class Matrix {
     this.data = data;
   }
 
+  public static fromTypedArray(typedData: Float64Array[]): Matrix {
+    const convertedData: number[][] = Array.from(typedData, (row) =>
+      Array.from(row)
+    );
+
+    return new Matrix(convertedData);
+  }
+
   get() {
     return this.data;
   }
@@ -30,21 +38,29 @@ export class Matrix {
   }
 
   public multiplyMatrices(matrix: Matrix): Matrix {
-    if (this.data[0].length !== matrix.data.length) {
+    const rowsA = this.data.length;
+    const colsA = this.data[0].length;
+    const colsB = matrix.data[0].length;
+
+    if (colsA !== matrix.data.length) {
       throw new Error("Invalid matrix size");
     }
 
-    const result: number[][] = [];
-    for (let i = 0; i < this.data.length; i++) {
-      result[i] = [];
-      for (let j = 0; j < matrix.data[0].length; j++) {
-        result[i][j] = 0;
-        for (let k = 0; k < this.data[0].length; k++) {
-          result[i][j] += this.data[i][k] * matrix.data[k][j];
+    const result = Array.from({ length: rowsA }, () =>
+      new Float64Array(colsB).fill(0)
+    );
+    const matrixData = matrix.data;
+
+    for (let i = 0; i < rowsA; i++) {
+      for (let k = 0; k < colsA; k++) {
+        const temp = this.data[i][k];
+        for (let j = 0; j < colsB; j++) {
+          result[i][j] += temp * matrixData[k][j];
         }
       }
     }
-    return new Matrix(result);
+
+    return Matrix.fromTypedArray(result);
   }
 
   public multiply(multiplier: number): Matrix {
@@ -145,6 +161,7 @@ export class Matrix {
     return new Matrix(result);
   }
 
+  // this is needs renaming
   public mean(): number {
     let sum = 0;
     for (let i = 0; i < this.data.length; i++) {
@@ -173,6 +190,23 @@ export class Matrix {
       for (let j = 0; j < this.data[0].length; j++) {
         result[i][j] = fn(this.data[i][j]);
       }
+    }
+
+    return new Matrix(result);
+  }
+
+  public max(): Matrix {
+    const result: number[][] = [];
+    for (let i = 0; i < this.data.length; i++) {
+      result[i] = [Math.max(...this.data[i])];
+    }
+    return new Matrix(result);
+  }
+
+  public argMax(): Matrix {
+    const result: number[][] = [];
+    for (let i = 0; i < this.data.length; i++) {
+      result[i] = [this.data[i].indexOf(Math.max(...this.data[i]))];
     }
     return new Matrix(result);
   }

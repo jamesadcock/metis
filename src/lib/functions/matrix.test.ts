@@ -39,16 +39,16 @@ describe("columns", () => {
 });
 
 describe("multiplyMatrices", () => {
-  it("should multiply (1 x 3) and (3 x 1) return correct result", () => {
+  it("should multiply (1 x 3) and (3 x 1) return correct result",async () => {
     const matrixA = new Matrix([[2, 3, 5]]);
 
     const matrixB = new Matrix([[2.5], [4], [1]]);
 
-    const result = matrixA.multiplyMatrices(matrixB);
+    const result = await matrixA.multiplyMatrices(matrixB);
     expect(result.get()).toEqual([[22]]);
   });
 
-  it("should multiply (4 x 3) and (3 x 2) return correct result", () => {
+  it("should multiply (4 x 3) and (3 x 2) return correct result",async () => {
     const matrixA = new Matrix([
       [2, 3, 5],
       [11, 13, 19],
@@ -62,7 +62,7 @@ describe("multiplyMatrices", () => {
       [1, 2],
     ]);
 
-    const result = matrixA.multiplyMatrices(matrixB);
+    const result = await matrixA.multiplyMatrices(matrixB);
     expect(result.get()).toEqual([
       [22, 40],
       [98.5, 161],
@@ -71,13 +71,13 @@ describe("multiplyMatrices", () => {
     ]);
   });
 
-  it("should throw error when multiply (1 x 3) and (2 x 1)", () => {
+  it("should throw error when multiply (1 x 3) and (2 x 1)", async () => {
     const matrixA = new Matrix([[2, 3, 5]]);
 
     const matrixB = new Matrix([[2], [4]]);
 
     expect(() => matrixA.multiplyMatrices(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -161,7 +161,7 @@ describe("add", () => {
       [4, 3, 5],
     ]);
     expect(() => matrixA.addMatrices(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -206,7 +206,7 @@ describe("subtractMatrices", () => {
     ]);
 
     expect(() => matrixA.subtractMatrices(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -324,7 +324,7 @@ describe("elementWiseMultiplication", () => {
     ]);
 
     expect(() => matrixA.elementWiseMultiplication(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -343,5 +343,30 @@ describe("addColumn", () => {
       [1, 2, 5],
       [3, 4, 6],
     ]);
+  });
+});
+
+describe("max", () => {
+  it("should return max value of matrix", () => {
+    const matrix = new Matrix([
+      [1, 2, 3],
+      [10, 20, 100, 5],
+    ]);
+
+    const result = matrix.max();
+    expect(result.get()[0][0]).toEqual(3);
+    expect(result.get()[1][0]).toEqual(100);
+  });
+});
+
+describe("argMax", () => {
+  it("should return argMax value of matrix", () => {
+    const matrix = new Matrix([
+      [1, 2, 3],
+      [10, 20, 100],
+    ]);
+
+    const result = matrix.argMax();
+    expect(result.get()).toEqual([[2], [2]]);
   });
 });
