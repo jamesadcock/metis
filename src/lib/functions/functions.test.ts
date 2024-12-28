@@ -1,4 +1,4 @@
-import { logLoss, sigmoid } from "./functions";
+import { logLoss, sigmoid, softmax } from "./functions";
 import { Matrix } from "./matrix";
 
 describe("sigmoid", () => {
@@ -28,5 +28,25 @@ describe("log loss", () => {
     const predictions = new Matrix([[0.9], [0.4]]);
     const result = logLoss(targets, predictions);
     expect(result).toEqual(0.30809306971190853);
+  });
+});
+
+describe("softmax", () => {
+  it("should return the correct softmax for single value", () => {
+    const logits = new Matrix([[1]]);
+    const result = softmax(logits);
+    expect(result.get()).toEqual([[1]]);
+  });
+
+  it("should return values that sum up to 1", () => {
+    const logits = new Matrix([[2.0], [1.0], [0.1]]);
+    const result = softmax(logits);
+    expect(result.sum()).toEqual(1);
+  });
+
+  it("should return the correct softmax for multiple values", () => {
+    const logits = new Matrix([[1], [1]]);
+    const result = softmax(logits);
+    expect(result.get()).toEqual([[0.5], [0.5]]);
   });
 });

@@ -369,3 +369,15 @@ describe("argMax", () => {
     expect(result.get()).toEqual([[2], [2]]);
   });
 });
+
+describe("sum", () => {
+  it("should return sum of matrix", () => {
+    const matrix = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+
+    const result = matrix.sum();
+    expect(result).toEqual(10);
+  });
+});

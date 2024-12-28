@@ -210,4 +210,14 @@ export class Matrix {
     }
     return new Matrix(result);
   }
+
+  public sum(): number {
+    let sum = 0;
+    for (let i = 0; i < this.data.length; i++) {
+      for (let j = 0; j < this.data[0].length; j++) {
+        sum += this.data[i][j];
+      }
+    }
+    return sum;
+  }
 }

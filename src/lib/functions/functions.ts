@@ -16,3 +16,15 @@ export const logLoss = (labels: Matrix, predictions: Matrix) => {
 
   return firstTerm.addMatrices(secondTerm).multiply(-1).mean();
 };
+
+export const softmax = (logits: Matrix) => {
+  const exponentials = logits.applyFunction(Math.exp);
+  const sum = exponentials.sum();
+  return exponentials.divide(sum);
+};
+
+/*
+  def softmax(logits):
+    exponentials = np.exp(logits)
+    return exponentials / np.sum(exponentials, axis=1).reshape(-1, 1)
+*/
