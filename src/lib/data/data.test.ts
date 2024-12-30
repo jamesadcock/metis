@@ -7,14 +7,36 @@ jest.mock("fs", () => ({
 import { Data } from "./data";
 
 describe("loadTraining", () => {
-  it("should return the correct data", () => {
+  it(`should return the correct data as a single batch when no batch
+      size is provided`, () => {
     const result = Data.loadTraining("test-data/pizza-small.csv");
-    expect(result.features.get()).toStrictEqual([
+    expect(result.features[0].get()).toStrictEqual([
       [13, 26, 9],
       [2, 14, 6],
     ]);
-    expect(result.labels.get()).toStrictEqual([[44], [23]]);
+    expect(result.labels[0].get()).toStrictEqual([[44], [23]]);
+    expect(result.batchSize).toBe(0);
+    expect(result.lastBatchSize).toBe(2);
+    expect(result.numberOfBatches).toBe(1);
   });
+
+  it(`should return the correct data with 2 batches when a batch
+    size of 1 provided`, () => {
+  const result = Data.loadTraining("test-data/pizza-small.csv", 1);
+  expect(result.features[0].get()).toStrictEqual([
+    [13, 26, 9],
+  ]);
+  expect(result.features[1].get()).toStrictEqual([
+    [2, 14, 6],
+  ]);
+
+  expect(result.labels[0].get()).toStrictEqual([[44]]);
+  expect(result.labels[1].get()).toStrictEqual([[23]]);
+  
+  expect(result.batchSize).toBe(1);
+  expect(result.lastBatchSize).toBe(0);
+  expect(result.numberOfBatches).toBe(2);
+});
 
   it("should throw an error", () => {
     expect(() => {

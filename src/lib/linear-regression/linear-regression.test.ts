@@ -7,8 +7,8 @@ describe("linear-regression", () => {
     const trainingData = Data.loadTraining("test-data/pizza.csv");
     const linearRegression = new LinearRegression();
     const weights = linearRegression.train(
-      trainingData.features,
-      trainingData.labels,
+      trainingData.features[0],
+      trainingData.labels[0],
       0.00005,
       100000,
     );
