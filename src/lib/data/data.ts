@@ -28,7 +28,7 @@ export class Data {
 
         for (let i = 0; i < numberOfBatches; i++) {
           featuresBatches.push(
-            features.slice(i * batchSize, (i + 1) * batchSize)
+            features.slice(i * batchSize, (i + 1) * batchSize),
           );
           labelsBatches.push(labels.slice(i * batchSize, (i + 1) * batchSize));
         }

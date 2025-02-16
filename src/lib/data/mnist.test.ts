@@ -5,7 +5,7 @@ describe("mnist load training data", () => {
     const mnist = new Mnist();
     const data = mnist.loadTrainingData(
       "test-data/mnist/train-images-idx3-ubyte",
-      "test-data/mnist/train-labels-idx1-ubyte"
+      "test-data/mnist/train-labels-idx1-ubyte",
     );
 
     expect(data.features[0].columns).toBe(28 * 28);
@@ -17,7 +17,7 @@ describe("mnist load training data", () => {
     const data = mnist.loadTrainingData(
       "test-data/mnist/train-images-idx3-ubyte",
       "test-data/mnist/train-labels-idx1-ubyte",
-      100
+      100,
     );
 
     expect(data.features.length).toBe(600);
@@ -30,9 +30,9 @@ describe("mnist load training data", () => {
     expect(() =>
       mnist.loadTrainingData(
         "test-data/mnist/not-found",
-        "test-data/mnist/not-found"
-      )
-    ).toThrowError("File not found: test-data/mnist/not-found");
+        "test-data/mnist/not-found",
+      ),
+    ).toThrow("File not found: test-data/mnist/not-found");
   });
 });
 
@@ -40,7 +40,7 @@ describe("test data", () => {
   it("should load test labels", () => {
     const mnist = new Mnist();
     const labels = mnist.loadTestLabels(
-      "test-data/mnist/t10k-labels-idx1-ubyte"
+      "test-data/mnist/t10k-labels-idx1-ubyte",
     );
 
     console.log(labels.get());
@@ -51,7 +51,7 @@ describe("test data", () => {
   it("should load test images", () => {
     const mnist = new Mnist();
     const images = mnist.loadTestImages(
-      "test-data/mnist/t10k-images-idx3-ubyte"
+      "test-data/mnist/t10k-images-idx3-ubyte",
     );
 
     expect(images.columns).toBe(28 * 28);

@@ -39,7 +39,7 @@ export class Mnist {
   public loadTrainingData(
     imagePath: string,
     labelsPath: string,
-    batchSize = 0
+    batchSize = 0,
   ): TrainingData {
     if (batchSize === 0) {
       const features = new Matrix(this.loadImages(imagePath));

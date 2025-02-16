@@ -1,58 +1,112 @@
-import { logLoss, sigmoid } from "../functions/functions";
+import {
+  logLoss,
+  sigmoid,
+  sigmoidGradient,
+  softmax,
+} from "../functions/functions";
 import { Matrix } from "../functions/matrix";
 
 export class NeuralNetwork {
-  public classify(features: Matrix, weights: Matrix, encoded = false) {
-    const bias = Array.from({ length: features.rows }, () => 1);
-    const featuresWithBias = features.addColumn(bias);
-
+  public classify(
+    features: Matrix,
+    weights1: Matrix,
+    weights2: Matrix,
+    encoded = false
+  ) {
     if (encoded) {
-      return this.forward(featuresWithBias, weights).argMax();
+      return this.forward(features, weights1, weights2).predictions.argMax();
     }
 
-    return this.forward(featuresWithBias, weights).applyFunction((x) =>
-      Math.round(x),
+    return this.forward(features, weights1, weights2).predictions.applyFunction(
+      (x) => Math.round(x)
     );
   }
 
-  public train(
+  // public train(
+  //   features: Matrix,
+  //   labels: Matrix,
+  //   numberOfHiddenNodes: number,
+  //   learningRate: number,
+  //   epochs: number,
+  //   showLoss = false
+  // ) {
+  //   const bias = Array.from({ length: features.rows }, () => 1);
+  //   const featuresWithBias = features.addColumn(bias);
+
+  //   let weights = new Matrix(
+  //     Array.from({ length: featuresWithBias.columns }, () =>
+  //       Array.from({ length: labels.columns }, () => 0)
+  //     )
+  //   );
+
+  //   for (let i = 0; i < epochs; i++) {
+  //     if (showLoss) {
+  //       this.showLoss(featuresWithBias, labels, weights, i);
+  //     }
+  //     weights = weights.subtractMatrices(
+  //       this.gradient(featuresWithBias, labels, weights).multiply(learningRate)
+  //     );
+  //   }
+  //   return {
+  //     weights: weights,
+  //     loss: logLoss(labels, this.forward(featuresWithBias, weights)),
+  //   };
+  // }
+
+  public backPropagation(
     features: Matrix,
     labels: Matrix,
-    learningRate: number,
-    epochs: number,
-    showLoss = false,
+    predictions: Matrix,
+    firstLayerOutput: Matrix,
+    weight2: Matrix
   ) {
+    const weight2Gradient = this.prependBias(firstLayerOutput)
+      .transpose()
+      .multiplyMatrices(predictions.subtractMatrices(labels))
+      .divide(features.rows);
+
+    const weight1Gradient = this.prependBias(features)
+      .transpose()
+      .multiplyMatrices(
+        predictions
+          .subtractMatrices(labels)
+          .multiplyMatrices(weight2.removeRow(0).transpose())
+          .elementWiseMultiplication(
+            firstLayerOutput.applyFunction(sigmoidGradient)
+          )
+      )
+      .divide(features.rows);
+
+    return { weight2Gradient, weight1Gradient };
+  }
+
+  private prependBias(features: Matrix): Matrix {
     const bias = Array.from({ length: features.rows }, () => 1);
-    const featuresWithBias = features.addColumn(bias);
-
-    let weights = new Matrix(
-      Array.from({ length: featuresWithBias.columns }, () =>
-        Array.from({ length: labels.columns }, () => 0),
-      ),
-    );
-
-    for (let i = 0; i < epochs; i++) {
-      if (showLoss) {
-        this.showLoss(featuresWithBias, labels, weights, i);
-      }
-      weights = weights.subtractMatrices(
-        this.gradient(featuresWithBias, labels, weights).multiply(learningRate),
-      );
-    }
-    return {
-      weights: weights,
-      loss: logLoss(labels, this.forward(featuresWithBias, weights)),
-    };
+    const featuresWithBias = features.addColumn(bias, 0);
+    return featuresWithBias;
   }
 
-  private forward(features: Matrix, weights: Matrix) {
-    return features.multiplyMatrices(weights).applyFunction(sigmoid);
+  private forward(features: Matrix, weight1: Matrix, weight2: Matrix) {
+    const firstLayerOutput = features
+      .multiplyMatrices(this.prependBias(weight1))
+      .applyFunction(sigmoid);
+    const predictions = firstLayerOutput.multiplyMatrices(
+      this.prependBias(weight2)
+    );
+    return { predictions: softmax(predictions), firstLayerOutput };
   }
 
-  private gradient(features: Matrix, labels: Matrix, weights: Matrix) {
-    const predictionErrors = this.forward(features, weights).subtractMatrices(
-      labels,
-    );
+  private gradient(
+    features: Matrix,
+    labels: Matrix,
+    weights1: Matrix,
+    weights2: Matrix
+  ) {
+    const predictionErrors = this.forward(
+      features,
+      weights1,
+      weights2
+    ).predictions.subtractMatrices(labels);
 
     const featuresTransposed = features.transpose();
     return featuresTransposed
@@ -63,14 +117,15 @@ export class NeuralNetwork {
   private showLoss(
     features: Matrix,
     labels: Matrix,
-    weights: Matrix,
-    iteration: number,
+    weights1: Matrix,
+    weights2: Matrix,
+    iteration: number
   ) {
     console.log(
       `Iterations ${iteration} => loss: ${logLoss(
         labels,
-        this.forward(features, weights),
-      )}`,
+        this.forward(features, weights1, weights2).predictions
+      )}`
     );
   }
 }

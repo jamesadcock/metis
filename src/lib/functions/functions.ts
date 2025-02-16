@@ -6,7 +6,7 @@ export const sigmoid = (input: number): number => {
 
 export const logLoss = (labels: Matrix, predictions: Matrix) => {
   const firstTerm = labels.elementWiseMultiplication(
-    predictions.applyFunction(Math.log),
+    predictions.applyFunction(Math.log)
   );
 
   const secondTerm = predictions
@@ -17,14 +17,19 @@ export const logLoss = (labels: Matrix, predictions: Matrix) => {
   return firstTerm.addMatrices(secondTerm).multiply(-1).mean();
 };
 
+export const crossEntropyLoss = (labels: Matrix, predictions: Matrix) => {
+  return -labels
+    .elementWiseMultiplication(predictions.applyFunction(Math.log))
+    .mean();
+};
+
 export const softmax = (logits: Matrix) => {
   const exponentials = logits.applyFunction(Math.exp);
   const sum = exponentials.sum();
   return exponentials.divide(sum);
 };
 
-/*
-  def softmax(logits):
-    exponentials = np.exp(logits)
-    return exponentials / np.sum(exponentials, axis=1).reshape(-1, 1)
-*/
+
+export const sigmoidGradient = (sigmoid: number): number => {
+  return sigmoid * (1 - sigmoid);
+};

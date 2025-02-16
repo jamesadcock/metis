@@ -329,7 +329,7 @@ describe("elementWiseMultiplication", () => {
 });
 
 describe("addColumn", () => {
-  it("should add a column to a matrix", () => {
+  it("should add column to end of matrix", () => {
     const matrix = new Matrix([
       [1, 2],
       [3, 4],
@@ -337,10 +337,25 @@ describe("addColumn", () => {
 
     const column = [5, 6];
 
-    const result = matrix.addColumn(column);
+    const result = matrix.addColumn(column, 2);
     expect(result.get()).toEqual([
       [1, 2, 5],
       [3, 4, 6],
+    ]);
+  });
+
+  it("should add column to beginning of matrix", () => {
+    const matrix = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+
+    const column = [5, 6];
+
+    const result = matrix.addColumn(column, 0);
+    expect(result.get()).toEqual([
+      [5, 1, 2],
+      [6, 3, 4],
     ]);
   });
 });
@@ -379,5 +394,36 @@ describe("sum", () => {
 
     const result = matrix.sum();
     expect(result).toEqual(10);
+  });
+});
+
+describe("removeRow", () => {
+  it("should remove row from matrix", () => {
+    const matrix = new Matrix([
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ]);
+
+    const result = matrix.removeRow(1);
+    expect(result.get()).toEqual([
+      [1, 2],
+      [5, 6],
+    ]);
+  });
+})
+
+describe("removeColumn", () => {
+  it("should remove column from matrix", () => {
+    const matrix = new Matrix([
+      [1, 2, 3],
+      [4, 5, 6],
+    ]);
+
+    const result = matrix.removeColumn(1);
+    expect(result.get()).toEqual([
+      [1, 3],
+      [4, 6],
+    ]);
   });
 });

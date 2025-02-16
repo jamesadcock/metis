@@ -7,7 +7,7 @@ export class Matrix {
 
   public static fromTypedArray(typedData: Float64Array[]): Matrix {
     const convertedData: number[][] = Array.from(typedData, (row) =>
-      Array.from(row),
+      Array.from(row)
     );
 
     return new Matrix(convertedData);
@@ -25,14 +25,11 @@ export class Matrix {
     return this.data[0].length;
   }
 
-  public addColumn(column: number[]): Matrix {
-    if (column.length !== this.data.length) {
-      throw new Error("Invalid column size");
-    }
-
+  public addColumn(column: number[], position: number): Matrix {
     const result: number[][] = [];
     for (let i = 0; i < this.data.length; i++) {
-      result[i] = this.data[i].concat(column[i]);
+      result[i] = Array.from(this.data[i]);
+      result[i].splice(position, 0, column[i]);
     }
     return new Matrix(result);
   }
@@ -47,7 +44,7 @@ export class Matrix {
     }
 
     const result = Array.from({ length: rowsA }, () =>
-      new Float64Array(colsB).fill(0),
+      new Float64Array(colsB).fill(0)
     );
     const matrixData = matrix.data;
 
@@ -79,7 +76,7 @@ export class Matrix {
       this.data.length !== matrix.data.length ||
       this.data[0].length !== matrix.data[0].length
     ) {
-      throw new Error("Invalid matrix size");
+      throw new Error(`Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`);
     }
 
     const result: number[][] = [];
@@ -219,5 +216,19 @@ export class Matrix {
       }
     }
     return sum;
+  }
+
+  public removeRow(row: number): Matrix {
+    const result = this.data.slice();
+    result.splice(row, 1);
+    return new Matrix(result);
+  }
+
+  public removeColumn(column: number): Matrix {
+    const result = this.data.slice();
+    for (let i = 0; i < result.length; i++) {
+      result[i].splice(column, 1);
+    }
+    return new Matrix(result);
   }
 }
