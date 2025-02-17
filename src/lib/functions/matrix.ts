@@ -40,7 +40,9 @@ export class Matrix {
     const colsB = matrix.data[0].length;
 
     if (colsA !== matrix.data.length) {
-      throw new Error("Invalid matrix size");
+      throw new Error(
+        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`
+      );
     }
 
     const result = Array.from({ length: rowsA }, () =>
@@ -76,7 +78,9 @@ export class Matrix {
       this.data.length !== matrix.data.length ||
       this.data[0].length !== matrix.data[0].length
     ) {
-      throw new Error(`Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`);
+      throw new Error(
+        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`
+      );
     }
 
     const result: number[][] = [];
@@ -228,6 +232,17 @@ export class Matrix {
     const result = this.data.slice();
     for (let i = 0; i < result.length; i++) {
       result[i].splice(column, 1);
+    }
+    return new Matrix(result);
+  }
+
+  public static random(rows: number, columns: number): Matrix {
+    const result: number[][] = [];
+    for (let i = 0; i < rows; i++) {
+      result[i] = [];
+      for (let j = 0; j < columns; j++) {
+        result[i][j] = Math.random();
+      }
     }
     return new Matrix(result);
   }

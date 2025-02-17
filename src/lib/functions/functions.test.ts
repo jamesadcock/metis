@@ -1,4 +1,10 @@
-import { crossEntropyLoss, logLoss, sigmoid, sigmoidGradient, softmax } from "./functions";
+import {
+  crossEntropyLoss,
+  logLoss,
+  sigmoid,
+  sigmoidGradient,
+  softmax,
+} from "./functions";
 import { Matrix } from "./matrix";
 
 describe("sigmoid", () => {

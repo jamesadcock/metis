@@ -1,4 +1,5 @@
 import { Matrix } from "./matrix";
+import { mockMathRandom } from "../../test/test-utilitity";
 
 describe("get", () => {
   it("should return correct matrix data", () => {
@@ -76,7 +77,7 @@ describe("multiplyMatrices", () => {
     const matrixB = new Matrix([[2], [4]]);
 
     expect(() => matrixA.multiplyMatrices(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -160,7 +161,7 @@ describe("add", () => {
       [4, 3, 5],
     ]);
     expect(() => matrixA.addMatrices(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -205,7 +206,7 @@ describe("subtractMatrices", () => {
     ]);
 
     expect(() => matrixA.subtractMatrices(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -323,7 +324,7 @@ describe("elementWiseMultiplication", () => {
     ]);
 
     expect(() => matrixA.elementWiseMultiplication(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -411,7 +412,7 @@ describe("removeRow", () => {
       [5, 6],
     ]);
   });
-})
+});
 
 describe("removeColumn", () => {
   it("should remove column from matrix", () => {
@@ -424,6 +425,19 @@ describe("removeColumn", () => {
     expect(result.get()).toEqual([
       [1, 3],
       [4, 6],
+    ]);
+  });
+});
+
+describe("random", () => {
+  mockMathRandom(0.5);
+  it("should return random matrix", () => {
+    const result = Matrix.random(2, 3);
+    expect(result.rows).toEqual(2);
+    expect(result.columns).toEqual(3);
+    expect(result.get()).toEqual([
+      [0.5, 0.5, 0.5],
+      [0.5, 0.5, 0.5],
     ]);
   });
 });

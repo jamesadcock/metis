@@ -6,7 +6,7 @@ export const sigmoid = (input: number): number => {
 
 export const logLoss = (labels: Matrix, predictions: Matrix) => {
   const firstTerm = labels.elementWiseMultiplication(
-    predictions.applyFunction(Math.log)
+    predictions.applyFunction(Math.log),
   );
 
   const secondTerm = predictions
@@ -29,7 +29,18 @@ export const softmax = (logits: Matrix) => {
   return exponentials.divide(sum);
 };
 
-
 export const sigmoidGradient = (sigmoid: number): number => {
   return sigmoid * (1 - sigmoid);
 };
+
+/*
+1.817
+1.822
+1.822
+
+5.46
+
+0.333
+0.334
+0.334
+  */

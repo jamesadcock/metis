@@ -53,7 +53,7 @@ export class NeuralNetwork {
   //   };
   // }
 
-  public backPropagation(
+  protected backPropagation(
     features: Matrix,
     labels: Matrix,
     predictions: Matrix,
@@ -86,13 +86,13 @@ export class NeuralNetwork {
     return featuresWithBias;
   }
 
-  private forward(features: Matrix, weight1: Matrix, weight2: Matrix) {
-    const firstLayerOutput = features
-      .multiplyMatrices(this.prependBias(weight1))
-      .applyFunction(sigmoid);
-    const predictions = firstLayerOutput.multiplyMatrices(
-      this.prependBias(weight2)
-    );
+  protected forward(features: Matrix, weight1: Matrix, weight2: Matrix) {
+    const firstLayerOutput = this.prependBias(features)
+      .multiplyMatrices(weight1)
+      .applyFunction(sigmoid); 
+
+    const predictions =
+      this.prependBias(firstLayerOutput).multiplyMatrices(weight2);
     return { predictions: softmax(predictions), firstLayerOutput };
   }
 
@@ -112,6 +112,23 @@ export class NeuralNetwork {
     return featuresTransposed
       .multiplyMatrices(predictionErrors)
       .divide(features.rows);
+  }
+
+
+  protected initializeWeights(
+    nInputVariables: number,
+    nHiddenNodes: number,
+    nClasses: number
+  ) {
+    const w1Rows = nInputVariables + 1;
+    const w1 = Matrix.random(w1Rows, nHiddenNodes).multiply(
+      Math.sqrt(1 / w1Rows)
+    );
+
+    const w2Rows = nHiddenNodes + 1;
+    const w2 = Matrix.random(w2Rows, nClasses).multiply(Math.sqrt(1 / w2Rows));
+
+    return { w1, w2 };
   }
 
   private showLoss(
