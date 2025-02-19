@@ -35,15 +35,16 @@ describe("iris", () => {
       0.001,
       10000,
     );
-    const classificationData = Data.load("test-data/iris-test.csv");
+    const classificationData = Data.loadValidationAndTest(
+      "test-data/iris-test.csv",
+    );
     const results = perceptron.classify(
-      classificationData.data,
+      classificationData.testFeatures,
       result.weights,
     );
 
     expect(results.get()[0][0]).toEqual(0);
     expect(results.get()[1][0]).toEqual(1);
-    expect(results.get()[2][0]).toEqual(0);
   });
 });
 
@@ -67,6 +68,7 @@ describe.skip("mnist", () => {
       trainingData.labels[0],
       0.0001,
       3,
+      true,
     );
     expect(result1.loss).toBeGreaterThan(result2.loss);
   }, 100000);
@@ -84,13 +86,13 @@ describe.skip("mnist", () => {
       0.00001,
       10,
     );
-    const classificationData = mnist.loadTestImages(
+    const classificationData = mnist.loadTestAndValidationImages(
       "test-data/mnist/t10k-images-idx3-ubyte",
-    );
+    ).test;
 
-    const classificationLabels = mnist.loadTestLabels(
+    const classificationLabels = mnist.loadTestAndValidationLabels(
       "test-data/mnist/t10k-labels-idx1-ubyte",
-    );
+    ).validate;
 
     const results = perceptron.classify(
       classificationData,

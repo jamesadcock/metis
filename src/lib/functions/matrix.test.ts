@@ -1,5 +1,5 @@
 import { Matrix } from "./matrix";
-import { mockMathRandom } from "../../test/test-utilitity";
+import { mockMathRandom, resetMockMathRandom } from "../../test/test-utilitity";
 
 describe("get", () => {
   it("should return correct matrix data", () => {
@@ -77,7 +77,7 @@ describe("multiplyMatrices", () => {
     const matrixB = new Matrix([[2], [4]]);
 
     expect(() => matrixA.multiplyMatrices(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });
@@ -161,7 +161,7 @@ describe("add", () => {
       [4, 3, 5],
     ]);
     expect(() => matrixA.addMatrices(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });
@@ -206,7 +206,7 @@ describe("subtractMatrices", () => {
     ]);
 
     expect(() => matrixA.subtractMatrices(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });
@@ -324,7 +324,7 @@ describe("elementWiseMultiplication", () => {
     ]);
 
     expect(() => matrixA.elementWiseMultiplication(matrixB)).toThrowError(
-      "Invalid matrix size"
+      "Invalid matrix size",
     );
   });
 });
@@ -375,14 +375,14 @@ describe("max", () => {
 });
 
 describe("argMax", () => {
-  it("should return argMax value of matrix", () => {
+  it("should return the index of the greatest value in each row", () => {
     const matrix = new Matrix([
-      [1, 2, 3],
+      [1, 3, 1],
       [10, 20, 100],
     ]);
 
     const result = matrix.argMax();
-    expect(result.get()).toEqual([[2], [2]]);
+    expect(result.get()).toEqual([[1], [2]]);
   });
 });
 
@@ -430,7 +430,14 @@ describe("removeColumn", () => {
 });
 
 describe("random", () => {
-  mockMathRandom(0.5);
+  beforeEach(() => {
+    mockMathRandom(0.5);
+  });
+
+  afterEach(() => {
+    resetMockMathRandom();
+  });
+
   it("should return random matrix", () => {
     const result = Matrix.random(2, 3);
     expect(result.rows).toEqual(2);
@@ -439,5 +446,17 @@ describe("random", () => {
       [0.5, 0.5, 0.5],
       [0.5, 0.5, 0.5],
     ]);
+  });
+});
+
+describe("matrixMax", () => {
+  it("should return max value of matrix", () => {
+    const matrix = new Matrix([
+      [1, 2, 3],
+      [10, 20, 100, 5],
+    ]);
+
+    const result = matrix.matrixMax();
+    expect(result).toEqual(100);
   });
 });

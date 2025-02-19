@@ -1,6 +1,72 @@
 import { Matrix } from "../functions/matrix";
 import { NeuralNetwork } from "./neural-network";
-import { mockMathRandom, roundMatrix } from "../../test/test-utilitity";
+import {
+  mockMathRandom,
+  resetMockMathRandom,
+  roundMatrix,
+} from "../../test/test-utilitity";
+import { Data } from "../data/data";
+import { Mnist } from "../data/mnist";
+
+describe("train", () => {
+  let trainingProps;
+
+  beforeAll(() => {
+    const { features, labels, unbatchedFeatures, unbatchedLabels } =
+      Data.loadTraining("test-data/iris-training.csv");
+    const { testFeatures, testLabels } = Data.loadValidationAndTest(
+      "test-data/iris-test.csv",
+    );
+
+    trainingProps = {
+      featureBatches: features,
+      labels,
+      numberOfHiddenNodes: 2,
+      learningRate: 0.1,
+      epochs: 1,
+      showLoss: false,
+      testFeatures,
+      testLabels,
+      unbatchedFeatures,
+      unbatchedLabels,
+    };
+  });
+
+  beforeEach(() => {
+    mockMathRandom(0.5);
+  });
+
+  afterEach(() => {
+    resetMockMathRandom();
+  });
+  it("should reduce loss", () => {
+    const neuralNetwork = new NeuralNetwork();
+
+    const result1 = neuralNetwork.train(trainingProps);
+    const result2 = neuralNetwork.train({ ...trainingProps, epochs: 2 });
+    const result3 = neuralNetwork.train({ ...trainingProps, epochs: 3 });
+
+    expect(result1.loss).toBeGreaterThan(result2.loss);
+    expect(result2.loss).toBeGreaterThan(result3.loss);
+  });
+
+  it("should correctly predict", () => {
+    const neuralNetwork = new NeuralNetwork();
+    const result = neuralNetwork.train({ ...trainingProps, epochs: 3 });
+
+    const { validationFeatures, validationLabels } = Data.loadValidationAndTest(
+      "test-data/iris-test.csv",
+    );
+    const results = neuralNetwork.classify(
+      validationFeatures,
+      result.weights1,
+      result.weights2,
+    );
+
+    expect(results.get()[0][0]).toEqual(validationLabels.get()[0][0]);
+    expect(results.get()[1][0]).toEqual(validationLabels.get()[1][0]);
+  });
+});
 
 describe("backPropagation", () => {
   it("should return 0 for gradients when predictions are correct", () => {
@@ -24,7 +90,7 @@ describe("backPropagation", () => {
       labels,
       predictions,
       firstLayerOutput,
-      weight2
+      weight2,
     );
 
     expect(result.weight1Gradient.get()).toEqual([
@@ -55,7 +121,7 @@ describe("backPropagation", () => {
       labels,
       predictions,
       firstLayerOutput,
-      weight2
+      weight2,
     );
 
     const roundedWeight1Gradient = roundMatrix(result.weight1Gradient.get(), 3);
@@ -125,7 +191,7 @@ describe("forward", () => {
     const roundedPredictions = roundMatrix(result.predictions.get(), 3);
     const roundedFirstLayerOutput = roundMatrix(
       result.firstLayerOutput.get(),
-      3
+      3,
     );
 
     expect(roundedFirstLayerOutput).toEqual([
@@ -139,7 +205,13 @@ describe("forward", () => {
 });
 
 describe("InitializeWeights", () => {
-  mockMathRandom(0.5);
+  beforeEach(() => {
+    mockMathRandom(0.5);
+  });
+
+  afterEach(() => {
+    resetMockMathRandom();
+  });
   it("should return correct values for weight1 and weight2", () => {
     const neuralNetwork = new NeuralNetworkTestWrapper();
     const nInputVariables = 3;
@@ -149,7 +221,7 @@ describe("InitializeWeights", () => {
     const { w1, w2 } = neuralNetwork.testInitializeWeights(
       nInputVariables,
       nHiddenNodes,
-      nClasses
+      nClasses,
     );
 
     expect(w1.get()).toEqual([
@@ -169,14 +241,14 @@ class NeuralNetworkTestWrapper extends NeuralNetwork {
     labels: Matrix,
     predictions: Matrix,
     firstLayerOutput: Matrix,
-    weight2: Matrix
+    weight2: Matrix,
   ) {
     return this.backPropagation(
       features,
       labels,
       predictions,
       firstLayerOutput,
-      weight2
+      weight2,
     );
   }
 
@@ -187,8 +259,94 @@ class NeuralNetworkTestWrapper extends NeuralNetwork {
   public testInitializeWeights(
     nInputVariables: number,
     nHiddenNodes: number,
-    nClasses: number
+    nClasses: number,
   ) {
     return this.initializeWeights(nInputVariables, nHiddenNodes, nClasses);
   }
 }
+
+describe.skip("mnist", () => {
+  let trainingProps;
+
+  beforeAll(() => {
+    const mnist = new Mnist();
+    const { features, labels, unbatchedFeatures, unbatchedLabels } =
+      mnist.loadTrainingData(
+        "test-data/mnist/train-images-idx3-ubyte",
+        "test-data/mnist/train-labels-idx1-ubyte",
+        1000,
+      );
+
+    const { test: testFeatures } = mnist.loadTestAndValidationImages(
+      "test-data/mnist/t10k-images-idx3-ubyte",
+    );
+
+    const { test: testLabels } = mnist.loadTestAndValidationLabels(
+      "test-data/mnist/t10k-labels-idx1-ubyte",
+    );
+
+    trainingProps = {
+      featureBatches: features,
+      labels,
+      numberOfHiddenNodes: 25,
+      learningRate: 0.8,
+      epochs: 1,
+      showLoss: true,
+      testFeatures,
+      testLabels,
+      unbatchedFeatures,
+      unbatchedLabels,
+    };
+  });
+
+  it.only("should reduce the loss", async () => {
+    const neuralNet = new NeuralNetwork();
+    const result1 = neuralNet.train({ ...trainingProps, epochs: 20 });
+
+    const result2 = neuralNet.train({ ...trainingProps, epochs: 20 });
+    const result3 = neuralNet.train({ ...trainingProps, epochs: 3 });
+
+    expect(result2.loss).toBeLessThan(result1.loss);
+    expect(result3.loss).toBeLessThan(result2.loss);
+  }, 100000);
+
+  // it("should correctly predict", () => {
+  //   const mnist = new Mnist();
+  //   const neuralNet = new NeuralNetwork();
+  //   const trainingData = mnist.loadTrainingData(
+  //     "test-data/mnist/train-images-idx3-ubyte",
+  //     "test-data/mnist/train-labels-idx1-ubyte",
+  //     256
+  //   );
+  //   const result = neuralNet.train(
+  //     trainingData.features,
+  //     trainingData.labels,
+  //     1,
+  //     100,
+  //   );
+  //   const classificationData = mnist.loadTestImages(
+  //     "test-data/mnist/t10k-images-idx3-ubyte",
+  //   );
+
+  //   const classificationLabels = mnist.loadTestLabels(
+  //     "test-data/mnist/t10k-labels-idx1-ubyte",
+  //   );
+
+  //   const results = neuralNet.classify(
+  //     classificationData,
+  //     result.weights,
+  //     true,
+  //   );
+
+  //   let correct = 0;
+  //   results.get().forEach((result, i) => {
+  //     if (result[0] === classificationLabels.get()[i][0]) {
+  //       correct++;
+  //     }
+  //   });
+  //   console.log(
+  //     `Correctly Identified: ${(correct / results.get().length) * 100}%`,
+  //   );
+  //   expect(classificationLabels.get()[0][0]).toEqual(7);
+  // });
+});

@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import { Matrix } from "../functions/matrix";
 import { TrainingData } from "./interfaces";
+import { splitArrayInHalf } from "./utility";
 
 export class Mnist {
   // Load images from the specified file and return as a Matrix
@@ -50,6 +51,8 @@ export class Mnist {
         batchSize: 0,
         lastBatchSize: features.rows,
         numberOfBatches: 1,
+        unbatchedFeatures: features,
+        unbatchedLabels: labels,
       };
     }
 
@@ -77,25 +80,31 @@ export class Mnist {
       batchSize,
       lastBatchSize,
       numberOfBatches,
+      unbatchedFeatures: new Matrix(features),
+      unbatchedLabels: this.oneHotEncode(labels),
     };
   }
 
-  // Load test labels from the specified file and return as a Matrix
-  public loadTestLabels(filename: string): Matrix {
+  public loadTestAndValidationLabels(filename: string) {
     const buffer = this.readBuffer(filename);
-    const headerSize = 8; // Header size for label files
+    const headerSize = 8;
     const labels: number[][] = [];
 
-    // Read each label from the buffer
     for (let i = headerSize; i < buffer.length; i++) {
       labels.push([buffer[i]]);
     }
 
-    return new Matrix(labels);
+    const { firstHalf: test, secondHalf: validate } = splitArrayInHalf(labels);
+    return {
+      test: new Matrix(test),
+      validate: new Matrix(validate),
+    };
   }
 
-  public loadTestImages(filename: string): Matrix {
-    return new Matrix(this.loadImages(filename));
+  public loadTestAndValidationImages(filename: string) {
+    const images = this.loadImages(filename);
+    const { firstHalf: test, secondHalf: validate } = splitArrayInHalf(images);
+    return { test: new Matrix(test), validate: new Matrix(validate) };
   }
 
   // One-hot encode the labels and return as a Matrix

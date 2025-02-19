@@ -39,23 +39,28 @@ describe("mnist load training data", () => {
 describe("test data", () => {
   it("should load test labels", () => {
     const mnist = new Mnist();
-    const labels = mnist.loadTestLabels(
+    const { test, validate } = mnist.loadTestAndValidationLabels(
       "test-data/mnist/t10k-labels-idx1-ubyte",
     );
 
-    console.log(labels.get());
-    expect(labels.columns).toBe(1);
-    expect(labels.rows).toBe(10000);
+    expect(test.columns).toBe(1);
+    expect(test.rows).toBe(5000);
+
+    expect(validate.columns).toBe(1);
+    expect(validate.rows).toBe(5000);
   });
 
   it("should load test images", () => {
     const mnist = new Mnist();
-    const images = mnist.loadTestImages(
+    const { test, validate } = mnist.loadTestAndValidationImages(
       "test-data/mnist/t10k-images-idx3-ubyte",
     );
 
-    expect(images.columns).toBe(28 * 28);
-    expect(images.rows).toBe(10000);
+    expect(test.columns).toBe(28 * 28);
+    expect(test.rows).toBe(5000);
+
+    expect(validate.columns).toBe(28 * 28);
+    expect(validate.rows).toBe(5000);
   });
 });
 

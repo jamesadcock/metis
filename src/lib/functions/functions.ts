@@ -18,15 +18,31 @@ export const logLoss = (labels: Matrix, predictions: Matrix) => {
 };
 
 export const crossEntropyLoss = (labels: Matrix, predictions: Matrix) => {
+  // Clip the predictions to avoid log(0)
+  const epsilon = 1e-15;
+  const clippedPredictions = predictions.applyFunction((x) =>
+    Math.max(Math.min(x, 1 - epsilon), epsilon),
+  );
+
+  // Calculate cross-entropy loss
   return -labels
-    .elementWiseMultiplication(predictions.applyFunction(Math.log))
+    .elementWiseMultiplication(clippedPredictions.applyFunction(Math.log))
     .mean();
 };
 
-export const softmax = (logits: Matrix) => {
-  const exponentials = logits.applyFunction(Math.exp);
-  const sum = exponentials.sum();
-  return exponentials.divide(sum);
+/*
+def loss(Y, y_hat):
+    return -np.sum(Y * np.log(y_hat)) / Y.shape[0]
+*/
+
+export const softmax = (logits: Matrix): Matrix => {
+  // Subtract the maximum logit value from each logit to prevent overflow
+  const maxLogit = logits.matrixMax();
+
+  return logits
+    .subtract(maxLogit)
+    .applyFunction(Math.exp)
+    .divide(logits.subtract(maxLogit).applyFunction(Math.exp).sum());
 };
 
 export const sigmoidGradient = (sigmoid: number): number => {

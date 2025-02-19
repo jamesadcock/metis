@@ -6,4 +6,6 @@ export interface TrainingData {
   batchSize: number;
   lastBatchSize: number;
   numberOfBatches: number;
+  unbatchedFeatures: Matrix;
+  unbatchedLabels: Matrix;
 }

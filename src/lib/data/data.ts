@@ -1,6 +1,7 @@
 import fs from "fs";
 import { Matrix } from "../functions/matrix";
 import { TrainingData } from "./interfaces";
+import { splitArrayInHalf } from "./utility";
 
 export class Data {
   public static loadTraining(filePath: string, batchSize = 0): TrainingData {
@@ -19,7 +20,8 @@ export class Data {
         features.push(values.slice(0, -1));
         labels.push([values[values.length - 1]]);
       });
-
+      const featuresMatrix = new Matrix(features);
+      const labelsMatrix = new Matrix(labels);
       if (batchSize > 0) {
         const featuresBatches: number[][][] = [];
         const labelsBatches: number[][][] = [];
@@ -44,11 +46,10 @@ export class Data {
           batchSize,
           lastBatchSize,
           numberOfBatches,
+          unbatchedFeatures: featuresMatrix,
+          unbatchedLabels: labelsMatrix,
         };
       }
-
-      const featuresMatrix = new Matrix(features);
-      const labelsMatrix = new Matrix(labels);
 
       return {
         features: [featuresMatrix],
@@ -56,17 +57,20 @@ export class Data {
         batchSize: 0,
         lastBatchSize: featuresMatrix.rows,
         numberOfBatches: 1,
+        unbatchedFeatures: featuresMatrix,
+        unbatchedLabels: labelsMatrix,
       };
     } catch (error) {
       throw new Error("Error reading the CSV file");
     }
   }
 
-  public static load(filePath: string) {
+  public static loadValidationAndTest(filePath: string) {
     try {
       const fileContent = fs.readFileSync(filePath, "utf8");
       const rows = fileContent.split("\n");
-      const data: number[][] = [];
+      const features: number[][] = [];
+      const labels: number[][] = [];
 
       rows.map((row) => {
         const values = row.split(",").map((value) => {
@@ -74,10 +78,22 @@ export class Data {
           return number;
         });
 
-        data.push(values);
+        features.push(values.slice(0, -1));
+        labels.push([values[values.length - 1]]);
       });
 
-      return { data: new Matrix(data) };
+      const { firstHalf: testFeatures, secondHalf: validateFeatures } =
+        splitArrayInHalf(features);
+
+      const { firstHalf: testLabels, secondHalf: validateLabels } =
+        splitArrayInHalf(labels);
+
+      return {
+        testFeatures: new Matrix(testFeatures),
+        validationFeatures: new Matrix(validateFeatures),
+        testLabels: new Matrix(testLabels),
+        validationLabels: new Matrix(validateLabels),
+      };
     } catch (error) {
       throw new Error("Error reading the CSV file");
     }

@@ -7,7 +7,7 @@ export class Matrix {
 
   public static fromTypedArray(typedData: Float64Array[]): Matrix {
     const convertedData: number[][] = Array.from(typedData, (row) =>
-      Array.from(row)
+      Array.from(row),
     );
 
     return new Matrix(convertedData);
@@ -41,12 +41,12 @@ export class Matrix {
 
     if (colsA !== matrix.data.length) {
       throw new Error(
-        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`
+        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`,
       );
     }
 
     const result = Array.from({ length: rowsA }, () =>
-      new Float64Array(colsB).fill(0)
+      new Float64Array(colsB).fill(0),
     );
     const matrixData = matrix.data;
 
@@ -79,7 +79,7 @@ export class Matrix {
       this.data[0].length !== matrix.data[0].length
     ) {
       throw new Error(
-        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`
+        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`,
       );
     }
 
@@ -204,6 +204,20 @@ export class Matrix {
     return new Matrix(result);
   }
 
+  public matrixMax(): number {
+    let max = -Infinity;
+    for (let i = 0; i < this.data.length; i++) {
+      for (let j = 0; j < this.data[0].length; j++) {
+        max = Math.max(max, this.data[i][j]);
+      }
+    }
+    return max;
+  }
+
+  /*
+  The argMax function finds the index of the maximum value in each
+  row of the matrix and returns a new matrix containing these indices.
+  */
   public argMax(): Matrix {
     const result: number[][] = [];
     for (let i = 0; i < this.data.length; i++) {
