@@ -1,5 +1,9 @@
 import { Matrix } from "./matrix";
-import { mockMathRandom, resetMockMathRandom } from "../../test/test-utilitity";
+import {
+  mockMathRandom,
+  resetMockMathRandom,
+  roundNumber,
+} from "../../test/test-utilitity";
 
 describe("get", () => {
   it("should return correct matrix data", () => {
@@ -77,7 +81,7 @@ describe("multiplyMatrices", () => {
     const matrixB = new Matrix([[2], [4]]);
 
     expect(() => matrixA.multiplyMatrices(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -161,7 +165,7 @@ describe("add", () => {
       [4, 3, 5],
     ]);
     expect(() => matrixA.addMatrices(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -206,7 +210,7 @@ describe("subtractMatrices", () => {
     ]);
 
     expect(() => matrixA.subtractMatrices(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -247,6 +251,15 @@ describe("mean", () => {
 
     const result = matrix.mean();
     expect(result).toEqual(2);
+  });
+});
+
+describe("standardDeviation", () => {
+  it("should return standard deviation of matrix", () => {
+    const matrix = new Matrix([[1], [2], [3]]);
+
+    const result = matrix.standardDeviation();
+    expect(roundNumber(result, 2)).toEqual(0.82);
   });
 });
 
@@ -324,7 +337,7 @@ describe("elementWiseMultiplication", () => {
     ]);
 
     expect(() => matrixA.elementWiseMultiplication(matrixB)).toThrowError(
-      "Invalid matrix size",
+      "Invalid matrix size"
     );
   });
 });
@@ -398,6 +411,36 @@ describe("sum", () => {
   });
 });
 
+describe("sumRows", () => {
+  it("should return sum of each row in matrix", () => {
+    const matrix = new Matrix([
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ]);
+
+    const result = matrix.sumRows();
+    expect(result.get()).toEqual([[3], [7], [11]]);
+  });
+});
+
+describe("divideRow", () => {
+  it("should divide each row by matrix", () => {
+    const matrix = new Matrix([
+      [1, 2],
+      [3, 4],
+    ]);
+
+    const row = new Matrix([[2], [4]]);
+
+    const result = matrix.divideRow(row);
+    expect(result.get()).toEqual([
+      [0.5, 1],
+      [0.75, 1],
+    ]);
+  });
+});
+
 describe("removeRow", () => {
   it("should remove row from matrix", () => {
     const matrix = new Matrix([
@@ -443,8 +486,8 @@ describe("random", () => {
     expect(result.rows).toEqual(2);
     expect(result.columns).toEqual(3);
     expect(result.get()).toEqual([
-      [0.5, 0.5, 0.5],
-      [0.5, 0.5, 0.5],
+      [0, 0, 0],
+      [0, 0, 0],
     ]);
   });
 });

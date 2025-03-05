@@ -6,7 +6,7 @@ export const sigmoid = (input: number): number => {
 
 export const logLoss = (labels: Matrix, predictions: Matrix) => {
   const firstTerm = labels.elementWiseMultiplication(
-    predictions.applyFunction(Math.log),
+    predictions.applyFunction(Math.log)
   );
 
   const secondTerm = predictions
@@ -21,7 +21,7 @@ export const crossEntropyLoss = (labels: Matrix, predictions: Matrix) => {
   // Clip the predictions to avoid log(0)
   const epsilon = 1e-15;
   const clippedPredictions = predictions.applyFunction((x) =>
-    Math.max(Math.min(x, 1 - epsilon), epsilon),
+    Math.max(Math.min(x, 1 - epsilon), epsilon)
   );
 
   // Calculate cross-entropy loss
@@ -30,33 +30,32 @@ export const crossEntropyLoss = (labels: Matrix, predictions: Matrix) => {
     .mean();
 };
 
-/*
-def loss(Y, y_hat):
-    return -np.sum(Y * np.log(y_hat)) / Y.shape[0]
-*/
-
 export const softmax = (logits: Matrix): Matrix => {
-  // Subtract the maximum logit value from each logit to prevent overflow
-  const maxLogit = logits.matrixMax();
-
-  return logits
-    .subtract(maxLogit)
-    .applyFunction(Math.exp)
-    .divide(logits.subtract(maxLogit).applyFunction(Math.exp).sum());
+  const exponentials = logits.applyFunction(Math.exp);
+  const sumOfRows = exponentials.sumRows();
+  return exponentials.divideRow(sumOfRows);
 };
 
 export const sigmoidGradient = (sigmoid: number): number => {
   return sigmoid * (1 - sigmoid);
 };
 
-/*
-1.817
-1.822
-1.822
+export const calculateMean = (values: number[][]): number => {
+  const flattenedArray = values.flat();
+  const sum = flattenedArray.reduce((acc, val) => acc + val, 0);
+  return sum / flattenedArray.length;
+};
 
-5.46
-
-0.333
-0.334
-0.334
-  */
+export const calculateStandardDeviation = (values: number[][]): number => {
+  const flattenedArray = values.flat();
+  const mean = calculateMean(values);
+  const squaredDifferences = flattenedArray.map((value) =>
+    Math.pow(value - mean, 2)
+  );
+  const sumOfSquaredDifferences = squaredDifferences.reduce(
+    (acc, val) => acc + val,
+    0
+  );
+  const variance = sumOfSquaredDifferences / flattenedArray.length;
+  return Math.sqrt(variance);
+};

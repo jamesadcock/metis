@@ -1,9 +1,79 @@
 import * as fs from "fs";
 import { Matrix } from "../functions/matrix";
-import { TrainingData } from "./interfaces";
+import { IData } from "./interfaces";
 import { splitArrayInHalf } from "./utility";
 
 export class Mnist {
+  public load(
+    trainingImagePath: string,
+    trainingLabelsPath: string,
+    testingImagePath: string,
+    testingLabelsPath: string,
+    batchSize = 0
+  ): IData {
+    const { testingLabels, validationLabels } =
+      this.loadTestAndValidationLabels(testingLabelsPath);
+    const { testingFeatures: testingFeaturesRaw, validationFeatures } =
+      this.loadTestAndValidationImages(testingImagePath);
+
+    const featuresRaw = this.loadImages(trainingImagePath);
+    const {
+      trainingSetStandardized: features,
+      testSetStandardized: testingFeatures,
+    } = this.standardize(featuresRaw, testingFeaturesRaw);
+    const labels = this.loadTrainingLabels(trainingLabelsPath);
+
+    if (batchSize === 0) {
+      const featuresMatrix = new Matrix(features);
+      const trainingLabels = this.oneHotEncode(labels);
+      return {
+        trainingFeatures: [featuresMatrix],
+        trainingLabels: [trainingLabels],
+        batchSize: 0,
+        lastBatchSize: featuresMatrix.rows,
+        numberOfBatches: 1,
+        unbatchedFeatures: featuresMatrix,
+        unbatchedLabels: trainingLabels,
+        testingFeatures: new Matrix(testingFeatures),
+        testingLabels,
+        validationFeatures: new Matrix(validationFeatures),
+        validationLabels,
+      };
+    }
+
+    const featuresBatches: number[][][] = [];
+    const labelsBatches: number[][][] = [];
+
+    const numberOfBatches = Math.floor(features.length / batchSize);
+    let lastBatchSize = features.length % batchSize;
+
+    for (let i = 0; i < numberOfBatches; i++) {
+      featuresBatches.push(features.slice(i * batchSize, (i + 1) * batchSize));
+      labelsBatches.push(labels.slice(i * batchSize, (i + 1) * batchSize));
+    }
+
+    if (lastBatchSize > 0) {
+      featuresBatches.push(features.slice(-lastBatchSize));
+      labelsBatches.push(labels.slice(-lastBatchSize));
+    } else {
+      lastBatchSize = batchSize;
+    }
+
+    return {
+      trainingFeatures: featuresBatches.map((batch) => new Matrix(batch)),
+      trainingLabels: labelsBatches.map((batch) => this.oneHotEncode(batch)),
+      batchSize,
+      lastBatchSize,
+      numberOfBatches,
+      unbatchedFeatures: new Matrix(features),
+      unbatchedLabels: this.oneHotEncode(labels),
+      testingFeatures: new Matrix(testingFeatures),
+      testingLabels,
+      validationFeatures: new Matrix(validationFeatures),
+      validationLabels,
+    };
+  }
+
   // Load images from the specified file and return as a Matrix
   private loadImages(filename: string) {
     const buffer = this.readBuffer(filename);
@@ -37,55 +107,7 @@ export class Mnist {
     return labels;
   }
 
-  public loadTrainingData(
-    imagePath: string,
-    labelsPath: string,
-    batchSize = 0,
-  ): TrainingData {
-    if (batchSize === 0) {
-      const features = new Matrix(this.loadImages(imagePath));
-      const labels = this.oneHotEncode(this.loadTrainingLabels(labelsPath));
-      return {
-        features: [features],
-        labels: [labels],
-        batchSize: 0,
-        lastBatchSize: features.rows,
-        numberOfBatches: 1,
-        unbatchedFeatures: features,
-        unbatchedLabels: labels,
-      };
-    }
-
-    const features = this.loadImages(imagePath);
-    const labels = this.loadTrainingLabels(labelsPath);
-    const featuresBatches: number[][][] = [];
-    const labelsBatches: number[][][] = [];
-
-    const numberOfBatches = Math.floor(features.length / batchSize);
-    const lastBatchSize = features.length % batchSize;
-
-    for (let i = 0; i < numberOfBatches; i++) {
-      featuresBatches.push(features.slice(i * batchSize, (i + 1) * batchSize));
-      labelsBatches.push(labels.slice(i * batchSize, (i + 1) * batchSize));
-    }
-
-    if (lastBatchSize > 0) {
-      featuresBatches.push(features.slice(-lastBatchSize));
-      labelsBatches.push(labels.slice(-lastBatchSize));
-    }
-
-    return {
-      features: featuresBatches.map((batch) => new Matrix(batch)),
-      labels: labelsBatches.map((batch) => this.oneHotEncode(batch)),
-      batchSize,
-      lastBatchSize,
-      numberOfBatches,
-      unbatchedFeatures: new Matrix(features),
-      unbatchedLabels: this.oneHotEncode(labels),
-    };
-  }
-
-  public loadTestAndValidationLabels(filename: string) {
+  private loadTestAndValidationLabels(filename: string) {
     const buffer = this.readBuffer(filename);
     const headerSize = 8;
     const labels: number[][] = [];
@@ -94,21 +116,26 @@ export class Mnist {
       labels.push([buffer[i]]);
     }
 
-    const { firstHalf: test, secondHalf: validate } = splitArrayInHalf(labels);
+    const { firstHalf: validation, secondHalf: test } =
+      splitArrayInHalf(labels);
     return {
-      test: new Matrix(test),
-      validate: new Matrix(validate),
+      testingLabels: new Matrix(test),
+      validationLabels: new Matrix(validation),
     };
   }
 
-  public loadTestAndValidationImages(filename: string) {
+  private loadTestAndValidationImages(filename: string) {
     const images = this.loadImages(filename);
-    const { firstHalf: test, secondHalf: validate } = splitArrayInHalf(images);
-    return { test: new Matrix(test), validate: new Matrix(validate) };
+    const { firstHalf: validation, secondHalf: test } =
+      splitArrayInHalf(images);
+    return {
+      testingFeatures: test,
+      validationFeatures: validation,
+    };
   }
 
   // One-hot encode the labels and return as a Matrix
-  public oneHotEncode(labels: number[][]): Matrix {
+  protected oneHotEncode(labels: number[][]): Matrix {
     const encodedLabels = labels.map((label) => {
       const oneHotEncoded = Array(10).fill(0);
       oneHotEncoded[label[0]] = 1;
@@ -125,5 +152,32 @@ export class Mnist {
     } catch (e) {
       throw new Error(`File not found: ${filename}`);
     }
+  }
+
+  protected standardize(trainingSet: number[][], testSet: number[][]) {
+    const flattenedTrainingSet = trainingSet.flat();
+    const average =
+      flattenedTrainingSet.reduce((a, b) => a + b, 0) /
+      flattenedTrainingSet.length;
+
+    let sumOfSquaredDifferences = 0;
+    for (let i = 0; i < flattenedTrainingSet.length; i++) {
+      sumOfSquaredDifferences += Math.pow(flattenedTrainingSet[i] - average, 2);
+    }
+    const standardDeviation = Math.sqrt(
+      sumOfSquaredDifferences / flattenedTrainingSet.length
+    );
+
+    const standardizeRow = (row: number[]): number[] => {
+      const standardizedRow: number[] = new Array(row.length);
+      for (let i = 0; i < row.length; i++) {
+        standardizedRow[i] = (row[i] - average) / standardDeviation;
+      }
+      return standardizedRow;
+    };
+
+    const trainingSetStandardized = trainingSet.map(standardizeRow);
+    const testSetStandardized = testSet.map(standardizeRow);
+    return { trainingSetStandardized, testSetStandardized };
   }
 }

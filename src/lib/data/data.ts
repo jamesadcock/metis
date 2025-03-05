@@ -1,10 +1,10 @@
 import fs from "fs";
 import { Matrix } from "../functions/matrix";
-import { TrainingData } from "./interfaces";
 import { splitArrayInHalf } from "./utility";
+import { IData } from "./interfaces";
 
 export class Data {
-  public static loadTraining(filePath: string, batchSize = 0): TrainingData {
+  public static loadTraining(filePath: string, batchSize = 0): IData {
     try {
       const fileContent = fs.readFileSync(filePath, "utf8");
       const rows = fileContent.split("\n");
@@ -30,7 +30,7 @@ export class Data {
 
         for (let i = 0; i < numberOfBatches; i++) {
           featuresBatches.push(
-            features.slice(i * batchSize, (i + 1) * batchSize),
+            features.slice(i * batchSize, (i + 1) * batchSize)
           );
           labelsBatches.push(labels.slice(i * batchSize, (i + 1) * batchSize));
         }
@@ -41,8 +41,8 @@ export class Data {
         }
 
         return {
-          features: featuresBatches.map((batch) => new Matrix(batch)),
-          labels: labelsBatches.map((batch) => new Matrix(batch)),
+          trainingFeatures: featuresBatches.map((batch) => new Matrix(batch)),
+          trainingLabels: labelsBatches.map((batch) => new Matrix(batch)),
           batchSize,
           lastBatchSize,
           numberOfBatches,
@@ -52,8 +52,8 @@ export class Data {
       }
 
       return {
-        features: [featuresMatrix],
-        labels: [labelsMatrix],
+        trainingFeatures: [featuresMatrix],
+        trainingLabels: [labelsMatrix],
         batchSize: 0,
         lastBatchSize: featuresMatrix.rows,
         numberOfBatches: 1,

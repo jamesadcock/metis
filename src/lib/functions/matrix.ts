@@ -7,7 +7,7 @@ export class Matrix {
 
   public static fromTypedArray(typedData: Float64Array[]): Matrix {
     const convertedData: number[][] = Array.from(typedData, (row) =>
-      Array.from(row),
+      Array.from(row)
     );
 
     return new Matrix(convertedData);
@@ -41,12 +41,12 @@ export class Matrix {
 
     if (colsA !== matrix.data.length) {
       throw new Error(
-        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`,
+        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`
       );
     }
 
     const result = Array.from({ length: rowsA }, () =>
-      new Float64Array(colsB).fill(0),
+      new Float64Array(colsB).fill(0)
     );
     const matrixData = matrix.data;
 
@@ -79,7 +79,7 @@ export class Matrix {
       this.data[0].length !== matrix.data[0].length
     ) {
       throw new Error(
-        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`,
+        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`
       );
     }
 
@@ -109,7 +109,9 @@ export class Matrix {
       this.data.length !== matrix.data.length ||
       this.data[0].length !== matrix.data[0].length
     ) {
-      throw new Error("Invalid matrix size");
+      throw new Error(
+        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`
+      );
     }
 
     const result: number[][] = [];
@@ -162,7 +164,6 @@ export class Matrix {
     return new Matrix(result);
   }
 
-  // this is needs renaming
   public mean(): number {
     let sum = 0;
     for (let i = 0; i < this.data.length; i++) {
@@ -171,6 +172,15 @@ export class Matrix {
       }
     }
     return sum / (this.data.length * this.data[0].length);
+  }
+
+  public standardDeviation(): number {
+    const mean = this.mean();
+    const sum = this.data
+      .map((row) => row.map((value) => Math.pow(value - mean, 2)))
+      .reduce((acc, row) => acc.concat(row), [])
+      .reduce((acc, value) => acc + value, 0);
+    return Math.sqrt(sum / (this.data.length * this.data[0].length));
   }
 
   public divide(divisor: number): Matrix {
@@ -236,6 +246,29 @@ export class Matrix {
     return sum;
   }
 
+  public sumRows(): Matrix {
+    const result: number[][] = [];
+    for (let i = 0; i < this.data.length; i++) {
+      result[i] = [this.data[i].reduce((acc, val) => acc + val, 0)];
+    }
+    return new Matrix(result);
+  }
+
+public divideRow(matrix: Matrix): Matrix {
+  if (matrix.columns !== 1 || matrix.rows !== this.rows) {
+    throw new Error("Invalid matrix size");
+  }
+
+  const result: number[][] = [];
+  for (let i = 0; i < this.data.length; i++) {
+    result[i] = [];
+    for (let j = 0; j < this.data[0].length; j++) {
+      result[i][j] = this.data[i][j] / matrix.data[i][0];
+    }
+  }
+  return new Matrix(result);
+}
+
   public removeRow(row: number): Matrix {
     const result = this.data.slice();
     result.splice(row, 1);
@@ -255,7 +288,7 @@ export class Matrix {
     for (let i = 0; i < rows; i++) {
       result[i] = [];
       for (let j = 0; j < columns; j++) {
-        result[i][j] = Math.random();
+        result[i][j] = Math.random() * 2 - 1;
       }
     }
     return new Matrix(result);

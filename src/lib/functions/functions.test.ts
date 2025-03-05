@@ -1,4 +1,7 @@
+import { roundMatrix, roundNumber } from "../../test/test-utilitity";
 import {
+  calculateMean,
+  calculateStandardDeviation,
   crossEntropyLoss,
   logLoss,
   sigmoid,
@@ -17,7 +20,7 @@ describe("sigmoid", () => {
     (input: number, output: number) => {
       const result = sigmoid(input);
       expect(result.toFixed(2)).toEqual(output.toFixed(2));
-    },
+    }
   );
 });
 
@@ -44,16 +47,22 @@ describe("softmax", () => {
     expect(result.get()).toEqual([[1]]);
   });
 
-  it("should return values that sum up to 1", () => {
-    const logits = new Matrix([[2.0], [1.0], [0.1]]);
-    const result = softmax(logits);
-    expect(result.sum()).toEqual(1);
-  });
-
   it("should return the correct softmax for multiple values", () => {
-    const logits = new Matrix([[1], [1]]);
+    const logits = new Matrix([
+      [2.0, 1.0, 0.1],
+      [0.5, 1.5, 2.5],
+    ]);
+
     const result = softmax(logits);
-    expect(result.get()).toEqual([[0.5], [0.5]]);
+    const roundedResult = roundMatrix(result.get(), 3);
+
+    expect(roundedResult).toEqual([
+      [0.659, 0.242, 0.099],
+      [0.09, 0.245, 0.665],
+    ]);
+
+    const sum = result.sum();
+    expect(sum).toEqual(2);
   });
 });
 
@@ -73,5 +82,25 @@ describe("sigmoid gradient", () => {
     const result = sigmoidGradient(sig);
     const roundedResult = parseFloat(result.toFixed(3));
     expect(roundedResult).toEqual(0.235);
+  });
+});
+
+describe("calculate mean", () => {
+  it("should return the correct mean for multiple values", () => {
+    const values = [
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ];
+    const result = calculateMean(values);
+    expect(result).toEqual(3.5);
+  });
+});
+
+describe("calculate standard deviation", () => {
+  it("should return the correct standard deviation for multiple values", () => {
+    const values = [[1], [2], [3]];
+    const result = calculateStandardDeviation(values);
+    expect(roundNumber(result, 2)).toEqual(0.82);
   });
 });

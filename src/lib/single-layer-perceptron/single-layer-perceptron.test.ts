@@ -6,22 +6,22 @@ describe("iris", () => {
     const trainingData = Data.loadTraining("test-data/iris-training.csv");
     const perceptron = new SingleLayerPerceptron();
     const result1 = perceptron.train(
-      trainingData.features[0],
-      trainingData.labels[0],
+      trainingData.trainingFeatures[0],
+      trainingData.trainingLabels[0],
       0.001,
-      10,
+      10
     );
     const result2 = perceptron.train(
-      trainingData.features[0],
-      trainingData.labels[0],
+      trainingData.trainingFeatures[0],
+      trainingData.trainingLabels[0],
       0.001,
-      100,
+      100
     );
     const result3 = perceptron.train(
-      trainingData.features[0],
-      trainingData.labels[0],
+      trainingData.trainingFeatures[0],
+      trainingData.trainingLabels[0],
       0.001,
-      1000,
+      1000
     );
     expect(result1.loss).toBeGreaterThan(result2.loss);
     expect(result2.loss).toBeGreaterThan(result3.loss);
@@ -30,17 +30,17 @@ describe("iris", () => {
     const trainingData = Data.loadTraining("test-data/iris-training.csv");
     const perceptron = new SingleLayerPerceptron();
     const result = perceptron.train(
-      trainingData.features[0],
-      trainingData.labels[0],
+      trainingData.trainingFeatures[0],
+      trainingData.trainingLabels[0],
       0.001,
-      10000,
+      10000
     );
     const classificationData = Data.loadValidationAndTest(
-      "test-data/iris-test.csv",
+      "test-data/iris-test.csv"
     );
     const results = perceptron.classify(
       classificationData.testFeatures,
-      result.weights,
+      result.weights
     );
 
     expect(results.get()[0][0]).toEqual(0);
@@ -52,23 +52,26 @@ describe.skip("mnist", () => {
   it("should reduce the loss", async () => {
     const mnist = new Mnist();
     const perceptron = new SingleLayerPerceptron();
-    const trainingData = mnist.loadTrainingData(
+    const trainingData = mnist.load(
       "test-data/mnist/train-images-idx3-ubyte",
       "test-data/mnist/train-labels-idx1-ubyte",
+      "test-data/mnist/t10k-images-idx3-ubyte",
+      "test-data/mnist/t10k-labels-idx1-ubyte"
+
     );
 
     const result1 = perceptron.train(
-      trainingData.features[0],
-      trainingData.labels[0],
+      trainingData.trainingFeatures[0],
+      trainingData.trainingLabels[0],
       0.0001,
-      2,
+      2
     );
     const result2 = perceptron.train(
-      trainingData.features[0],
-      trainingData.labels[0],
+      trainingData.trainingFeatures[0],
+      trainingData.trainingLabels[0],
       0.0001,
       3,
-      true,
+      true
     );
     expect(result1.loss).toBeGreaterThan(result2.loss);
   }, 100000);
@@ -76,39 +79,39 @@ describe.skip("mnist", () => {
   it("should correctly predict", () => {
     const mnist = new Mnist();
     const perceptron = new SingleLayerPerceptron();
-    const trainingData = mnist.loadTrainingData(
+    const {
+      trainingFeatures,
+      trainingLabels,
+      validationFeatures,
+      validationLabels,
+    } = mnist.load(
       "test-data/mnist/train-images-idx3-ubyte",
       "test-data/mnist/train-labels-idx1-ubyte",
+      "test-data/mnist/t10k-images-idx3-ubyte",
+      "test-data/mnist/t10k-labels-idx1-ubyte"
     );
     const result = perceptron.train(
-      trainingData.features[0],
-      trainingData.labels[0],
+      trainingFeatures[0],
+      trainingLabels[0],
       0.00001,
-      10,
+      10
     );
-    const classificationData = mnist.loadTestAndValidationImages(
-      "test-data/mnist/t10k-images-idx3-ubyte",
-    ).test;
-
-    const classificationLabels = mnist.loadTestAndValidationLabels(
-      "test-data/mnist/t10k-labels-idx1-ubyte",
-    ).validate;
 
     const results = perceptron.classify(
-      classificationData,
+      validationFeatures,
       result.weights,
-      true,
+      true
     );
 
     let correct = 0;
     results.get().forEach((result, i) => {
-      if (result[0] === classificationLabels.get()[i][0]) {
+      if (result[0] === validationLabels.get()[i][0]) {
         correct++;
       }
     });
     console.log(
-      `Correctly Identified: ${(correct / results.get().length) * 100}%`,
+      `Correctly Identified: ${(correct / results.get().length) * 100}%`
     );
-    expect(classificationLabels.get()[0][0]).toEqual(7);
+    expect(validationLabels.get()[0][0]).toEqual(7);
   });
 });

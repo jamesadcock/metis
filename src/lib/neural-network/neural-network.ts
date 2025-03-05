@@ -1,3 +1,4 @@
+import { TrainingProps } from "../data/interfaces";
 import {
   crossEntropyLoss,
   sigmoid,
@@ -11,29 +12,18 @@ export class NeuralNetwork {
     features: Matrix,
     weights1: Matrix,
     weights2: Matrix,
-    encoded = false,
+    encoded = false
   ) {
     if (encoded) {
       return this.forward(features, weights1, weights2).predictions.argMax();
     }
 
     return this.forward(features, weights1, weights2).predictions.applyFunction(
-      (x) => Math.round(x),
+      (x) => Math.round(x)
     );
   }
 
-  public train(props: {
-    featureBatches: Matrix[];
-    labels: Matrix[];
-    numberOfHiddenNodes: number;
-    learningRate: number;
-    epochs: number;
-    showLoss: boolean | undefined;
-    testFeatures: Matrix;
-    testLabels: Matrix;
-    unbatchedFeatures: Matrix;
-    unbatchedLabels: Matrix;
-  }) {
+  public train(props: TrainingProps) {
     const {
       featureBatches,
       labels,
@@ -41,8 +31,8 @@ export class NeuralNetwork {
       learningRate,
       epochs,
       showLoss: report,
-      testFeatures,
-      testLabels,
+      testingFeatures,
+      testingLabels,
       unbatchedFeatures,
       unbatchedLabels,
     } = props;
@@ -53,7 +43,7 @@ export class NeuralNetwork {
     let { w1, w2 } = this.initializeWeights(
       nInputVariables,
       numberOfHiddenNodes,
-      nClasses,
+      nClasses
     );
 
     for (let i = 0; i < epochs; i++) {
@@ -61,7 +51,7 @@ export class NeuralNetwork {
         const { predictions, firstLayerOutput } = this.forward(
           featureBatches[j],
           w1,
-          w2,
+          w2
         );
 
         const { weight2Gradient, weight1Gradient } = this.backPropagation(
@@ -69,26 +59,25 @@ export class NeuralNetwork {
           labels[j],
           predictions,
           firstLayerOutput,
-          w2,
+          w2
         );
 
         w2 = w2.subtractMatrices(weight2Gradient.multiply(learningRate));
         w1 = w1.subtractMatrices(weight1Gradient.multiply(learningRate));
 
         if (Number.isNaN(w2.get()[0][0]) || Number.isNaN(w1.get()[0][0])) {
-          console.log(`Iteration ${i} => NaN found`);
           break;
         }
       }
       if (report) {
         this.report(
-          testFeatures,
-          testLabels,
+          testingFeatures,
+          testingLabels,
           unbatchedFeatures,
           unbatchedLabels,
           w1,
           w2,
-          i,
+          i
         );
       }
     }
@@ -104,7 +93,7 @@ export class NeuralNetwork {
     labels: Matrix,
     predictions: Matrix,
     firstLayerOutput: Matrix,
-    weight2: Matrix,
+    weight2: Matrix
   ) {
     const weight2Gradient = this.prependBias(firstLayerOutput)
       .transpose()
@@ -118,8 +107,8 @@ export class NeuralNetwork {
           .subtractMatrices(labels)
           .multiplyMatrices(weight2.removeRow(0).transpose())
           .elementWiseMultiplication(
-            firstLayerOutput.applyFunction(sigmoidGradient),
-          ),
+            firstLayerOutput.applyFunction(sigmoidGradient)
+          )
       )
       .divide(features.rows);
 
@@ -133,10 +122,8 @@ export class NeuralNetwork {
   }
 
   protected forward(features: Matrix, weight1: Matrix, weight2: Matrix) {
-    const firstLayerOutput = this.prependBias(features)
-      .multiplyMatrices(weight1)
-      .applyFunction(sigmoid);
-
+    const product = this.prependBias(features).multiplyMatrices(weight1);
+    const firstLayerOutput = product.applyFunction(sigmoid);
     const predictions =
       this.prependBias(firstLayerOutput).multiplyMatrices(weight2);
     return { predictions: softmax(predictions), firstLayerOutput };
@@ -145,16 +132,15 @@ export class NeuralNetwork {
   protected initializeWeights(
     nInputVariables: number,
     nHiddenNodes: number,
-    nClasses: number,
+    nClasses: number
   ) {
     const w1Rows = nInputVariables + 1;
     const w1 = Matrix.random(w1Rows, nHiddenNodes).multiply(
-      Math.sqrt(1 / w1Rows),
+      Math.sqrt(1 / w1Rows)
     );
 
     const w2Rows = nHiddenNodes + 1;
     const w2 = Matrix.random(w2Rows, nClasses).multiply(Math.sqrt(1 / w2Rows));
-
     return { w1, w2 };
   }
 
@@ -165,7 +151,7 @@ export class NeuralNetwork {
     trainLabels: Matrix,
     w1: Matrix,
     w2: Matrix,
-    epoch: number,
+    epoch: number
   ) {
     const { predictions } = this.forward(trainFeatures, w1, w2);
     const loss = crossEntropyLoss(trainLabels, predictions);
@@ -176,7 +162,7 @@ export class NeuralNetwork {
         .applyFunction((input) => (input === 0 ? 1 : 0))
         .mean() * 100;
     console.log(
-      `${epoch} > Loss: ${loss.toFixed(8)}, Accuracy: ${accuracy.toFixed(2)}%`,
+      `${epoch} > Loss: ${loss.toFixed(8)}, Accuracy: ${accuracy.toFixed(2)}%`
     );
   }
 }
