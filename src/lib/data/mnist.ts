@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { Matrix } from "../functions/matrix";
-import { IData } from "./interfaces";
+import { TrainingData } from "./interfaces";
 import { splitArrayInHalf } from "./utility";
 
 export class Mnist {
@@ -10,7 +10,7 @@ export class Mnist {
     testingImagePath: string,
     testingLabelsPath: string,
     batchSize = 0
-  ): IData {
+  ): TrainingData {
     const { testingLabels, validationLabels } =
       this.loadTestAndValidationLabels(testingLabelsPath);
     const { testingFeatures: testingFeaturesRaw, validationFeatures } =
@@ -133,7 +133,7 @@ export class Mnist {
       validationFeatures: validation,
     };
   }
-
+ 
   // One-hot encode the labels and return as a Matrix
   protected oneHotEncode(labels: number[][]): Matrix {
     const encodedLabels = labels.map((label) => {

@@ -9,46 +9,39 @@ import { Data } from "../data/data";
 import { Mnist } from "../data/mnist";
 import { TrainingProps } from "../data/interfaces";
 
-describe.skip("train", () => {
+describe("train", () => {
   let trainingProps: TrainingProps;
 
   beforeAll(() => {
     const {
-      trainingFeatures: features,
-      trainingLabels: labels,
+      trainingFeatures,
+      trainingLabels,
       unbatchedFeatures,
       unbatchedLabels,
-    } = Data.loadTraining("test-data/iris-training.csv");
+    } = Data.loadTraining("test-data/iris-training.csv", 0, true);
 
     const { testFeatures: testingFeatures, testLabels: testingLabels } =
       Data.loadValidationAndTest("test-data/iris-test.csv");
 
     trainingProps = {
-      featureBatches: features,
-      labels,
+      trainingFeatureBatches: trainingFeatures,
+      trainingLabelBatches: trainingLabels,
       numberOfHiddenNodes: 2,
-      learningRate: 0.1,
-      epochs: 1,
+      learningRate: 1,
+      epochs: 10,
       showLoss: false,
       testingFeatures,
       testingLabels,
-      unbatchedFeatures,
-      unbatchedLabels,
+      unbatchedTrainingFeatures: unbatchedFeatures,
+      unbatchedTrainingLabels: unbatchedLabels,
     };
   });
 
-  beforeEach(() => {
-    mockMathRandom(0.5);
-  });
-
-  afterEach(() => {
-    resetMockMathRandom();
-  });
   it("should reduce loss", () => {
     const neuralNetwork = new NeuralNetwork();
     const result1 = neuralNetwork.train(trainingProps);
-    const result2 = neuralNetwork.train({ ...trainingProps, epochs: 2 });
-    const result3 = neuralNetwork.train({ ...trainingProps, epochs: 3 });
+    const result2 = neuralNetwork.train({ ...trainingProps, epochs: 50 });
+    const result3 = neuralNetwork.train({ ...trainingProps, epochs: 100 });
 
     expect(result1.loss).toBeGreaterThan(result2.loss);
     expect(result2.loss).toBeGreaterThan(result3.loss);
@@ -56,7 +49,7 @@ describe.skip("train", () => {
 
   it("should correctly predict", () => {
     const neuralNetwork = new NeuralNetwork();
-    const result = neuralNetwork.train({ ...trainingProps, epochs: 3 });
+    const result = neuralNetwork.train({ ...trainingProps, epochs: 500 });
 
     const { validationFeatures, validationLabels } = Data.loadValidationAndTest(
       "test-data/iris-test.csv"
@@ -204,7 +197,6 @@ describe.skip("forward", () => {
       [1, 1],
     ]);
     expect(roundedPredictions).toEqual([[0.333], [0.334], [0.334]]);
-
   });
 });
 
@@ -270,14 +262,14 @@ class NeuralNetworkTestWrapper extends NeuralNetwork {
 }
 
 describe.skip("mnist", () => {
-  let trainingProps;
+  let trainingProps: TrainingProps;
   let validationData;
 
   beforeAll(() => {
     const mnist = new Mnist();
     const {
-      trainingFeatures: features,
-      trainingLabels: labels,
+      trainingFeatures,
+      trainingLabels,
       unbatchedFeatures,
       unbatchedLabels,
       testingFeatures,
@@ -293,16 +285,16 @@ describe.skip("mnist", () => {
     );
 
     trainingProps = {
-      featureBatches: features,
-      labels,
+      trainingFeatureBatches: trainingFeatures,
+      trainingLabelBatches: trainingLabels,
       numberOfHiddenNodes: 25,
       learningRate: 0.8,
       epochs: 25,
       showLoss: true,
       testingFeatures,
       testingLabels,
-      unbatchedFeatures,
-      unbatchedLabels,
+      unbatchedTrainingFeatures: unbatchedFeatures,
+      unbatchedTrainingLabels: unbatchedLabels,
     };
 
     validationData = {
@@ -311,7 +303,7 @@ describe.skip("mnist", () => {
     };
   });
 
-  it("should reduce the loss", async () => {
+  it.only("should reduce the loss", async () => {
     const neuralNet = new NeuralNetwork();
     const { loss: loss1 } = neuralNet.train({ ...trainingProps, epochs: 1 });
     const { loss: loss2 } = neuralNet.train({ ...trainingProps, epochs: 2 });
@@ -330,11 +322,16 @@ describe.skip("mnist", () => {
     const result = neuralNet.classify(
       validationData.validationFeatures,
       weights1,
-      weights2,
-      true
+      weights2
     );
-    expect(result.get()[0][0]).toEqual(validationData.validationLabels.get()[0][0]);
-    expect(result.get()[1][0]).toEqual(validationData.validationLabels.get()[1][0]);
-    expect(result.get()[2][0]).toEqual(validationData.validationLabels.get()[2][0]);
+    expect(result.get()[0][0]).toEqual(
+      validationData.validationLabels.get()[0][0]
+    );
+    expect(result.get()[1][0]).toEqual(
+      validationData.validationLabels.get()[1][0]
+    );
+    expect(result.get()[2][0]).toEqual(
+      validationData.validationLabels.get()[2][0]
+    );
   }, 100000);
 });

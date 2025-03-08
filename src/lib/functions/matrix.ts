@@ -7,7 +7,7 @@ export class Matrix {
 
   public static fromTypedArray(typedData: Float64Array[]): Matrix {
     const convertedData: number[][] = Array.from(typedData, (row) =>
-      Array.from(row)
+      Array.from(row),
     );
 
     return new Matrix(convertedData);
@@ -41,12 +41,12 @@ export class Matrix {
 
     if (colsA !== matrix.data.length) {
       throw new Error(
-        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`
+        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`,
       );
     }
 
     const result = Array.from({ length: rowsA }, () =>
-      new Float64Array(colsB).fill(0)
+      new Float64Array(colsB).fill(0),
     );
     const matrixData = matrix.data;
 
@@ -79,7 +79,7 @@ export class Matrix {
       this.data[0].length !== matrix.data[0].length
     ) {
       throw new Error(
-        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`
+        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`,
       );
     }
 
@@ -110,7 +110,7 @@ export class Matrix {
       this.data[0].length !== matrix.data[0].length
     ) {
       throw new Error(
-        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`
+        `Invalid matrix size: ${this.data.length}x${this.data[0].length} and ${matrix.data.length}x${matrix.data[0].length}`,
       );
     }
 
@@ -254,20 +254,20 @@ export class Matrix {
     return new Matrix(result);
   }
 
-public divideRow(matrix: Matrix): Matrix {
-  if (matrix.columns !== 1 || matrix.rows !== this.rows) {
-    throw new Error("Invalid matrix size");
-  }
-
-  const result: number[][] = [];
-  for (let i = 0; i < this.data.length; i++) {
-    result[i] = [];
-    for (let j = 0; j < this.data[0].length; j++) {
-      result[i][j] = this.data[i][j] / matrix.data[i][0];
+  public divideRow(matrix: Matrix): Matrix {
+    if (matrix.columns !== 1 || matrix.rows !== this.rows) {
+      throw new Error("Invalid matrix size");
     }
+
+    const result: number[][] = [];
+    for (let i = 0; i < this.data.length; i++) {
+      result[i] = [];
+      for (let j = 0; j < this.data[0].length; j++) {
+        result[i][j] = this.data[i][j] / matrix.data[i][0];
+      }
+    }
+    return new Matrix(result);
   }
-  return new Matrix(result);
-}
 
   public removeRow(row: number): Matrix {
     const result = this.data.slice();

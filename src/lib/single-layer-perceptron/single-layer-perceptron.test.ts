@@ -9,19 +9,19 @@ describe("iris", () => {
       trainingData.trainingFeatures[0],
       trainingData.trainingLabels[0],
       0.001,
-      10
+      10,
     );
     const result2 = perceptron.train(
       trainingData.trainingFeatures[0],
       trainingData.trainingLabels[0],
       0.001,
-      100
+      100,
     );
     const result3 = perceptron.train(
       trainingData.trainingFeatures[0],
       trainingData.trainingLabels[0],
       0.001,
-      1000
+      1000,
     );
     expect(result1.loss).toBeGreaterThan(result2.loss);
     expect(result2.loss).toBeGreaterThan(result3.loss);
@@ -33,14 +33,14 @@ describe("iris", () => {
       trainingData.trainingFeatures[0],
       trainingData.trainingLabels[0],
       0.001,
-      10000
+      10000,
     );
     const classificationData = Data.loadValidationAndTest(
-      "test-data/iris-test.csv"
+      "test-data/iris-test.csv",
     );
     const results = perceptron.classify(
       classificationData.testFeatures,
-      result.weights
+      result.weights,
     );
 
     expect(results.get()[0][0]).toEqual(0);
@@ -56,22 +56,21 @@ describe.skip("mnist", () => {
       "test-data/mnist/train-images-idx3-ubyte",
       "test-data/mnist/train-labels-idx1-ubyte",
       "test-data/mnist/t10k-images-idx3-ubyte",
-      "test-data/mnist/t10k-labels-idx1-ubyte"
-
+      "test-data/mnist/t10k-labels-idx1-ubyte",
     );
 
     const result1 = perceptron.train(
       trainingData.trainingFeatures[0],
       trainingData.trainingLabels[0],
       0.0001,
-      2
+      2,
     );
     const result2 = perceptron.train(
       trainingData.trainingFeatures[0],
       trainingData.trainingLabels[0],
       0.0001,
       3,
-      true
+      true,
     );
     expect(result1.loss).toBeGreaterThan(result2.loss);
   }, 100000);
@@ -88,19 +87,19 @@ describe.skip("mnist", () => {
       "test-data/mnist/train-images-idx3-ubyte",
       "test-data/mnist/train-labels-idx1-ubyte",
       "test-data/mnist/t10k-images-idx3-ubyte",
-      "test-data/mnist/t10k-labels-idx1-ubyte"
+      "test-data/mnist/t10k-labels-idx1-ubyte",
     );
     const result = perceptron.train(
       trainingFeatures[0],
       trainingLabels[0],
       0.00001,
-      10
+      10,
     );
 
     const results = perceptron.classify(
       validationFeatures,
       result.weights,
-      true
+      true,
     );
 
     let correct = 0;
@@ -110,7 +109,7 @@ describe.skip("mnist", () => {
       }
     });
     console.log(
-      `Correctly Identified: ${(correct / results.get().length) * 100}%`
+      `Correctly Identified: ${(correct / results.get().length) * 100}%`,
     );
     expect(validationLabels.get()[0][0]).toEqual(7);
   });

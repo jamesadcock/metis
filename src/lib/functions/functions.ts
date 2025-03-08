@@ -20,8 +20,8 @@ export const logLoss = (labels: Matrix, predictions: Matrix) => {
 export const crossEntropyLoss = (labels: Matrix, predictions: Matrix) => {
   // Clip the predictions to avoid log(0)
   const epsilon = 1e-15;
-  const clippedPredictions = predictions.applyFunction((x) =>
-    Math.max(Math.min(x, 1 - epsilon), epsilon)
+  const clippedPredictions = predictions.applyFunction((prediction) =>
+    Math.max(Math.min(prediction, 1 - epsilon), epsilon)
   );
 
   // Calculate cross-entropy loss

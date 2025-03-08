@@ -22,7 +22,7 @@ describe.skip("mnist", () => {
       "test-data/mnist/train-images-idx3-ubyte",
       "test-data/mnist/train-labels-idx1-ubyte",
       "test-data/mnist/t10k-images-idx3-ubyte",
-      "test-data/mnist/t10k-labels-idx1-ubyte"
+      "test-data/mnist/t10k-labels-idx1-ubyte",
     );
 
     expect(trainingFeatures[0].columns).toBe(28 * 28);
@@ -65,7 +65,7 @@ describe.skip("mnist", () => {
       "test-data/mnist/train-labels-idx1-ubyte",
       "test-data/mnist/t10k-images-idx3-ubyte",
       "test-data/mnist/t10k-labels-idx1-ubyte",
-      600
+      600,
     );
 
     expect(trainingFeatures[0].columns).toBe(28 * 28);
@@ -118,7 +118,7 @@ describe("mnist standardize", () => {
     const testSet = [[1, 2, 3]];
     const { trainingSetStandardized, testSetStandardized } = mnist.standardize(
       trainingSet,
-      testSet
+      testSet,
     );
     expect(roundNumber(trainingSetStandardized[0][0], 3)).toEqual(-1.225);
     expect(roundNumber(trainingSetStandardized[0][1], 3)).toEqual(0);

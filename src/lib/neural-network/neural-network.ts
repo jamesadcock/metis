@@ -8,33 +8,22 @@ import {
 import { Matrix } from "../functions/matrix";
 
 export class NeuralNetwork {
-  public classify(
-    features: Matrix,
-    weights1: Matrix,
-    weights2: Matrix,
-    encoded = false
-  ) {
-    if (encoded) {
-      return this.forward(features, weights1, weights2).predictions.argMax();
-    }
-
-    return this.forward(features, weights1, weights2).predictions.applyFunction(
-      (x) => Math.round(x)
-    );
+  public classify(features: Matrix, weights1: Matrix, weights2: Matrix) {
+    return this.forward(features, weights1, weights2).predictions.argMax();
   }
 
   public train(props: TrainingProps) {
     const {
-      featureBatches,
-      labels,
+      trainingFeatureBatches: featureBatches,
+      trainingLabelBatches: labels,
       numberOfHiddenNodes,
       learningRate,
       epochs,
       showLoss: report,
       testingFeatures,
       testingLabels,
-      unbatchedFeatures,
-      unbatchedLabels,
+      unbatchedTrainingFeatures: unbatchedFeatures,
+      unbatchedTrainingLabels: unbatchedLabels,
     } = props;
 
     const nInputVariables = featureBatches[0].columns;
@@ -155,7 +144,7 @@ export class NeuralNetwork {
   ) {
     const { predictions } = this.forward(trainFeatures, w1, w2);
     const loss = crossEntropyLoss(trainLabels, predictions);
-    const classifications = this.classify(testFeatures, w1, w2, true);
+    const classifications = this.classify(testFeatures, w1, w2);
     const accuracy =
       classifications
         .subtractMatrices(testLabels)

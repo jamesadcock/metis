@@ -1,10 +1,15 @@
 import fs from "fs";
 import { Matrix } from "../functions/matrix";
 import { splitArrayInHalf } from "./utility";
-import { IData } from "./interfaces";
+import { TrainingData } from "./interfaces";
+import { BaseData } from "./base-data";
 
-export class Data {
-  public static loadTraining(filePath: string, batchSize = 0): IData {
+export class Data extends BaseData {
+  public static loadTraining(
+    filePath: string,
+    batchSize = 0,
+    oneHotEncode = false
+  ): TrainingData {
     try {
       const fileContent = fs.readFileSync(filePath, "utf8");
       const rows = fileContent.split("\n");
@@ -20,8 +25,13 @@ export class Data {
         features.push(values.slice(0, -1));
         labels.push([values[values.length - 1]]);
       });
+
       const featuresMatrix = new Matrix(features);
-      const labelsMatrix = new Matrix(labels);
+
+      const labelsMatrix = oneHotEncode
+        ? this.oneHotEncode(labels)
+        : new Matrix(labels);
+
       if (batchSize > 0) {
         const featuresBatches: number[][][] = [];
         const labelsBatches: number[][][] = [];

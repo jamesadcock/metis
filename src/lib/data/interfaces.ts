@@ -1,6 +1,6 @@
 import { Matrix } from "../functions/matrix";
 
-export interface IData {
+export interface TrainingData {
   trainingFeatures: Matrix[];
   trainingLabels: Matrix[];
   testingFeatures?: Matrix;
@@ -15,14 +15,14 @@ export interface IData {
 }
 
 export interface TrainingProps {
-  featureBatches: Matrix[];
-  labels: Matrix[];
+  trainingFeatureBatches: Matrix[];
+  trainingLabelBatches: Matrix[];
   numberOfHiddenNodes: number;
   learningRate: number;
   epochs: number;
   showLoss: boolean | undefined;
   testingFeatures: Matrix;
   testingLabels: Matrix;
-  unbatchedFeatures: Matrix;
-  unbatchedLabels: Matrix;
+  unbatchedTrainingFeatures: Matrix;
+  unbatchedTrainingLabels: Matrix;
 }
