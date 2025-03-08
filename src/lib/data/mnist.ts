@@ -2,8 +2,9 @@ import * as fs from "fs";
 import { Matrix } from "../functions/matrix";
 import { TrainingData } from "./interfaces";
 import { splitArrayInHalf } from "./utility";
+import { BaseData } from "./base-data";
 
-export class Mnist {
+export class Mnist extends BaseData {
   public load(
     trainingImagePath: string,
     trainingLabelsPath: string,
@@ -25,7 +26,7 @@ export class Mnist {
 
     if (batchSize === 0) {
       const featuresMatrix = new Matrix(features);
-      const trainingLabels = this.oneHotEncode(labels);
+      const trainingLabels = Mnist.oneHotEncode(labels);
       return {
         trainingFeatures: [featuresMatrix],
         trainingLabels: [trainingLabels],
@@ -61,12 +62,12 @@ export class Mnist {
 
     return {
       trainingFeatures: featuresBatches.map((batch) => new Matrix(batch)),
-      trainingLabels: labelsBatches.map((batch) => this.oneHotEncode(batch)),
+      trainingLabels: labelsBatches.map((batch) => Mnist.oneHotEncode(batch)),
       batchSize,
       lastBatchSize,
       numberOfBatches,
       unbatchedFeatures: new Matrix(features),
-      unbatchedLabels: this.oneHotEncode(labels),
+      unbatchedLabels: Mnist.oneHotEncode(labels),
       testingFeatures: new Matrix(testingFeatures),
       testingLabels,
       validationFeatures: new Matrix(validationFeatures),
@@ -132,17 +133,6 @@ export class Mnist {
       testingFeatures: test,
       validationFeatures: validation,
     };
-  }
- 
-  // One-hot encode the labels and return as a Matrix
-  protected oneHotEncode(labels: number[][]): Matrix {
-    const encodedLabels = labels.map((label) => {
-      const oneHotEncoded = Array(10).fill(0);
-      oneHotEncoded[label[0]] = 1;
-      return oneHotEncoded;
-    });
-
-    return new Matrix(encodedLabels);
   }
 
   // Read the file and return its content as a Buffer

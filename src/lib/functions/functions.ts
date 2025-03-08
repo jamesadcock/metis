@@ -6,7 +6,7 @@ export const sigmoid = (input: number): number => {
 
 export const logLoss = (labels: Matrix, predictions: Matrix) => {
   const firstTerm = labels.elementWiseMultiplication(
-    predictions.applyFunction(Math.log)
+    predictions.applyFunction(Math.log),
   );
 
   const secondTerm = predictions
@@ -21,7 +21,7 @@ export const crossEntropyLoss = (labels: Matrix, predictions: Matrix) => {
   // Clip the predictions to avoid log(0)
   const epsilon = 1e-15;
   const clippedPredictions = predictions.applyFunction((prediction) =>
-    Math.max(Math.min(prediction, 1 - epsilon), epsilon)
+    Math.max(Math.min(prediction, 1 - epsilon), epsilon),
   );
 
   // Calculate cross-entropy loss
@@ -50,11 +50,11 @@ export const calculateStandardDeviation = (values: number[][]): number => {
   const flattenedArray = values.flat();
   const mean = calculateMean(values);
   const squaredDifferences = flattenedArray.map((value) =>
-    Math.pow(value - mean, 2)
+    Math.pow(value - mean, 2),
   );
   const sumOfSquaredDifferences = squaredDifferences.reduce(
     (acc, val) => acc + val,
-    0
+    0,
   );
   const variance = sumOfSquaredDifferences / flattenedArray.length;
   return Math.sqrt(variance);

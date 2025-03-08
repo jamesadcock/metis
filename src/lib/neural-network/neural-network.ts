@@ -32,7 +32,7 @@ export class NeuralNetwork {
     let { w1, w2 } = this.initializeWeights(
       nInputVariables,
       numberOfHiddenNodes,
-      nClasses
+      nClasses,
     );
 
     for (let i = 0; i < epochs; i++) {
@@ -40,7 +40,7 @@ export class NeuralNetwork {
         const { predictions, firstLayerOutput } = this.forward(
           featureBatches[j],
           w1,
-          w2
+          w2,
         );
 
         const { weight2Gradient, weight1Gradient } = this.backPropagation(
@@ -48,7 +48,7 @@ export class NeuralNetwork {
           labels[j],
           predictions,
           firstLayerOutput,
-          w2
+          w2,
         );
 
         w2 = w2.subtractMatrices(weight2Gradient.multiply(learningRate));
@@ -66,7 +66,7 @@ export class NeuralNetwork {
           unbatchedLabels,
           w1,
           w2,
-          i
+          i,
         );
       }
     }
@@ -82,7 +82,7 @@ export class NeuralNetwork {
     labels: Matrix,
     predictions: Matrix,
     firstLayerOutput: Matrix,
-    weight2: Matrix
+    weight2: Matrix,
   ) {
     const weight2Gradient = this.prependBias(firstLayerOutput)
       .transpose()
@@ -96,8 +96,8 @@ export class NeuralNetwork {
           .subtractMatrices(labels)
           .multiplyMatrices(weight2.removeRow(0).transpose())
           .elementWiseMultiplication(
-            firstLayerOutput.applyFunction(sigmoidGradient)
-          )
+            firstLayerOutput.applyFunction(sigmoidGradient),
+          ),
       )
       .divide(features.rows);
 
@@ -121,11 +121,11 @@ export class NeuralNetwork {
   protected initializeWeights(
     nInputVariables: number,
     nHiddenNodes: number,
-    nClasses: number
+    nClasses: number,
   ) {
     const w1Rows = nInputVariables + 1;
     const w1 = Matrix.random(w1Rows, nHiddenNodes).multiply(
-      Math.sqrt(1 / w1Rows)
+      Math.sqrt(1 / w1Rows),
     );
 
     const w2Rows = nHiddenNodes + 1;
@@ -140,7 +140,7 @@ export class NeuralNetwork {
     trainLabels: Matrix,
     w1: Matrix,
     w2: Matrix,
-    epoch: number
+    epoch: number,
   ) {
     const { predictions } = this.forward(trainFeatures, w1, w2);
     const loss = crossEntropyLoss(trainLabels, predictions);
@@ -151,7 +151,7 @@ export class NeuralNetwork {
         .applyFunction((input) => (input === 0 ? 1 : 0))
         .mean() * 100;
     console.log(
-      `${epoch} > Loss: ${loss.toFixed(8)}, Accuracy: ${accuracy.toFixed(2)}%`
+      `${epoch} > Loss: ${loss.toFixed(8)}, Accuracy: ${accuracy.toFixed(2)}%`,
     );
   }
 }

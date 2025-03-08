@@ -22,7 +22,7 @@ describe.skip("mnist", () => {
       "test-data/mnist/train-images-idx3-ubyte",
       "test-data/mnist/train-labels-idx1-ubyte",
       "test-data/mnist/t10k-images-idx3-ubyte",
-      "test-data/mnist/t10k-labels-idx1-ubyte",
+      "test-data/mnist/t10k-labels-idx1-ubyte"
     );
 
     expect(trainingFeatures[0].columns).toBe(28 * 28);
@@ -65,7 +65,7 @@ describe.skip("mnist", () => {
       "test-data/mnist/train-labels-idx1-ubyte",
       "test-data/mnist/t10k-images-idx3-ubyte",
       "test-data/mnist/t10k-labels-idx1-ubyte",
-      600,
+      600
     );
 
     expect(trainingFeatures[0].columns).toBe(28 * 28);
@@ -90,27 +90,6 @@ describe.skip("mnist", () => {
   });
 });
 
-describe("mnist one hot encode", () => {
-  it("should one hot encode", () => {
-    const mnist = new testMnist();
-    const labels = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]];
-    const oneHotEncoded = mnist.oneHotEncode(labels);
-
-    expect(oneHotEncoded.get()).toEqual([
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    ]);
-  });
-});
-
 describe("mnist standardize", () => {
   it("should standardize", () => {
     const mnist = new testMnist();
@@ -118,7 +97,7 @@ describe("mnist standardize", () => {
     const testSet = [[1, 2, 3]];
     const { trainingSetStandardized, testSetStandardized } = mnist.standardize(
       trainingSet,
-      testSet,
+      testSet
     );
     expect(roundNumber(trainingSetStandardized[0][0], 3)).toEqual(-1.225);
     expect(roundNumber(trainingSetStandardized[0][1], 3)).toEqual(0);
@@ -131,10 +110,6 @@ describe("mnist standardize", () => {
 });
 
 class testMnist extends Mnist {
-  public oneHotEncode(labels: number[][]) {
-    return super.oneHotEncode(labels);
-  }
-
   public standardize(trainingSet: number[][], testSet: number[][]) {
     return super.standardize(trainingSet, testSet);
   }

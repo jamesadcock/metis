@@ -20,7 +20,7 @@ describe("sigmoid", () => {
     (input: number, output: number) => {
       const result = sigmoid(input);
       expect(result.toFixed(2)).toEqual(output.toFixed(2));
-    }
+    },
   );
 });
 
