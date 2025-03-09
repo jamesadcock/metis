@@ -52,12 +52,12 @@ describe("train", () => {
     const result = neuralNetwork.train({ ...trainingProps, epochs: 500 });
 
     const { validationFeatures, validationLabels } = Data.loadValidationAndTest(
-      "test-data/iris-test.csv"
+      "test-data/iris-test.csv",
     );
     const results = neuralNetwork.classify(
       validationFeatures,
       result.weights1,
-      result.weights2
+      result.weights2,
     );
 
     expect(results.get()[0][0]).toEqual(validationLabels.get()[0][0]);
@@ -87,7 +87,7 @@ describe("backPropagation", () => {
       labels,
       predictions,
       firstLayerOutput,
-      weight2
+      weight2,
     );
 
     expect(result.weight1Gradient.get()).toEqual([
@@ -118,7 +118,7 @@ describe("backPropagation", () => {
       labels,
       predictions,
       firstLayerOutput,
-      weight2
+      weight2,
     );
 
     const roundedWeight1Gradient = roundMatrix(result.weight1Gradient.get(), 3);
@@ -158,7 +158,7 @@ describe("forward", () => {
     const roundedPredictions = roundMatrix(result.predictions.get(), 3);
     const roundedFirstLayerOutput = roundMatrix(
       result.firstLayerOutput.get(),
-      3
+      3,
     );
 
     expect(roundedFirstLayerOutput).toEqual([
@@ -191,7 +191,7 @@ describe("InitializeWeights", () => {
     const { w1, w2 } = neuralNetwork.testInitializeWeights(
       nInputVariables,
       nHiddenNodes,
-      nClasses
+      nClasses,
     );
 
     expect(w1.get()).toEqual([
@@ -211,14 +211,14 @@ class NeuralNetworkTestWrapper extends NeuralNetwork {
     labels: Matrix,
     predictions: Matrix,
     firstLayerOutput: Matrix,
-    weight2: Matrix
+    weight2: Matrix,
   ) {
     return this.backPropagation(
       features,
       labels,
       predictions,
       firstLayerOutput,
-      weight2
+      weight2,
     );
   }
 
@@ -229,7 +229,7 @@ class NeuralNetworkTestWrapper extends NeuralNetwork {
   public testInitializeWeights(
     nInputVariables: number,
     nHiddenNodes: number,
-    nClasses: number
+    nClasses: number,
   ) {
     return this.initializeWeights(nInputVariables, nHiddenNodes, nClasses);
   }
@@ -255,7 +255,7 @@ describe("mnist", () => {
       "test-data/mnist/train-labels-idx1-ubyte",
       "test-data/mnist/t10k-images-idx3-ubyte",
       "test-data/mnist/t10k-labels-idx1-ubyte",
-      1000
+      1000,
     );
 
     trainingProps = {
@@ -293,16 +293,16 @@ describe("mnist", () => {
     const result = neuralNet.classify(
       validationData.validationFeatures,
       weights1,
-      weights2
+      weights2,
     );
     expect(result.get()[0][0]).toEqual(
-      validationData.validationLabels.get()[0][0]
+      validationData.validationLabels.get()[0][0],
     );
     expect(result.get()[1][0]).toEqual(
-      validationData.validationLabels.get()[1][0]
+      validationData.validationLabels.get()[1][0],
     );
     expect(result.get()[2][0]).toEqual(
-      validationData.validationLabels.get()[2][0]
+      validationData.validationLabels.get()[2][0],
     );
   }, 100000);
 });

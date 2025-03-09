@@ -10,7 +10,7 @@ describe("linear-regression", () => {
       trainingData.trainingFeatureBatches[0],
       trainingData.trainingLabelBatches[0],
       0.00005,
-      100000
+      100000,
     );
     const prediction1Data = new Matrix([[6, 14, 9]]);
     const prediction2Data = new Matrix([[13, 19, 4]]);

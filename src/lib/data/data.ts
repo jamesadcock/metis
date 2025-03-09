@@ -8,7 +8,7 @@ export class Data extends BaseData {
   public static loadTraining(
     filePath: string,
     batchSize = 0,
-    oneHotEncode = false
+    oneHotEncode = false,
   ): TrainingData {
     try {
       const fileContent = fs.readFileSync(filePath, "utf8");
@@ -40,7 +40,7 @@ export class Data extends BaseData {
 
         for (let i = 0; i < numberOfBatches; i++) {
           featuresBatches.push(
-            features.slice(i * batchSize, (i + 1) * batchSize)
+            features.slice(i * batchSize, (i + 1) * batchSize),
           );
           labelsBatches.push(labels.slice(i * batchSize, (i + 1) * batchSize));
         }
@@ -52,7 +52,7 @@ export class Data extends BaseData {
 
         return {
           trainingFeatureBatches: featuresBatches.map(
-            (batch) => new Matrix(batch)
+            (batch) => new Matrix(batch),
           ),
           trainingLabelBatches: labelsBatches.map((batch) => new Matrix(batch)),
           batchSize,

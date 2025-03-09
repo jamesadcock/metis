@@ -10,7 +10,7 @@ export class Mnist extends BaseData {
     trainingLabelsPath: string,
     testingImagePath: string,
     testingLabelsPath: string,
-    batchSize = 0
+    batchSize = 0,
   ): TrainingData {
     const { testingLabels, validationLabels } =
       this.loadTestAndValidationLabels(testingLabelsPath);
@@ -63,7 +63,7 @@ export class Mnist extends BaseData {
     return {
       trainingFeatureBatches: featuresBatches.map((batch) => new Matrix(batch)),
       trainingLabelBatches: labelsBatches.map((batch) =>
-        Mnist.oneHotEncode(batch)
+        Mnist.oneHotEncode(batch),
       ),
       batchSize,
       lastBatchSize,
@@ -157,7 +157,7 @@ export class Mnist extends BaseData {
       sumOfSquaredDifferences += Math.pow(flattenedTrainingSet[i] - average, 2);
     }
     const standardDeviation = Math.sqrt(
-      sumOfSquaredDifferences / flattenedTrainingSet.length
+      sumOfSquaredDifferences / flattenedTrainingSet.length,
     );
 
     const standardizeRow = (row: number[]): number[] => {
