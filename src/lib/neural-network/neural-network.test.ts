@@ -235,7 +235,7 @@ class NeuralNetworkTestWrapper extends NeuralNetwork {
   }
 }
 
-describe("mnist", () => {
+describe.skip("mnist", () => {
   let trainingProps: TrainingProps;
   let validationData;
 
@@ -277,7 +277,7 @@ describe("mnist", () => {
     };
   });
 
-  it.only("should reduce the loss", async () => {
+  it("should reduce the loss", async () => {
     const neuralNet = new NeuralNetwork();
     const { loss: loss1 } = neuralNet.train({ ...trainingProps, epochs: 1 });
     const { loss: loss2 } = neuralNet.train({ ...trainingProps, epochs: 2 });

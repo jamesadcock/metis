@@ -2,14 +2,13 @@ import { Matrix } from "../functions/matrix";
 
 export abstract class BaseData {
   protected static oneHotEncode(labels: number[][]): Matrix {
-    const uniqueLabels = Array.from(new Set(labels.flat()));
-    const oneHotEncodedLabels = labels.map((label) => {
-      const oneHotEncodedLabel = new Array(uniqueLabels.length).fill(0);
-      const index = uniqueLabels.indexOf(label[0]);
-      oneHotEncodedLabel[index] = 1;
-      return oneHotEncodedLabel;
+    const max = Math.max(...labels.flat());
+    const encodedLabels = labels.map((label) => {
+      const oneHotEncoded = Array(max + 1).fill(0);
+      oneHotEncoded[label[0]] = 1;
+      return oneHotEncoded;
     });
 
-    return new Matrix(oneHotEncodedLabels);
+    return new Matrix(encodedLabels);
   }
 }

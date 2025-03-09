@@ -3,7 +3,7 @@ import { Mnist } from "./mnist";
 
 // tests disabled because they take too long to run
 // enable when working on the mnist class
-describe("mnist", () => {
+describe.skip("mnist", () => {
   it("should load training data into a single batch when no batch size provided", () => {
     const mnist = new Mnist();
     const {

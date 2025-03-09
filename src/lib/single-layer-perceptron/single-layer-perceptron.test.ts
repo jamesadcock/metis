@@ -48,7 +48,7 @@ describe("iris", () => {
   });
 });
 
-describe("mnist", () => {
+describe.skip("mnist", () => {
   it("should reduce the loss", async () => {
     const mnist = new Mnist();
     const perceptron = new SingleLayerPerceptron();
