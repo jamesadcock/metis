@@ -1,8 +1,8 @@
 import { Matrix } from "../functions/matrix";
 
 export interface TrainingData {
-  trainingFeatures: Matrix[];
-  trainingLabels: Matrix[];
+  trainingFeatureBatches: Matrix[];
+  trainingLabelBatches: Matrix[];
   testingFeatures?: Matrix;
   testingLabels?: Matrix;
   validationFeatures?: Matrix;
@@ -10,8 +10,8 @@ export interface TrainingData {
   batchSize: number;
   lastBatchSize: number;
   numberOfBatches: number;
-  unbatchedFeatures: Matrix;
-  unbatchedLabels: Matrix;
+  unbatchedTrainingFeatures: Matrix;
+  unbatchedTrainingLabels: Matrix;
 }
 
 export interface TrainingProps {
@@ -20,7 +20,7 @@ export interface TrainingProps {
   numberOfHiddenNodes: number;
   learningRate: number;
   epochs: number;
-  showLoss: boolean | undefined;
+  report: boolean | undefined;
   testingFeatures: Matrix;
   testingLabels: Matrix;
   unbatchedTrainingFeatures: Matrix;

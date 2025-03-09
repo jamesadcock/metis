@@ -14,26 +14,26 @@ describe("train", () => {
 
   beforeAll(() => {
     const {
-      trainingFeatures,
-      trainingLabels,
-      unbatchedFeatures,
-      unbatchedLabels,
+      trainingFeatureBatches,
+      trainingLabelBatches,
+      unbatchedTrainingFeatures,
+      unbatchedTrainingLabels,
     } = Data.loadTraining("test-data/iris-training.csv", 0, true);
 
     const { testFeatures: testingFeatures, testLabels: testingLabels } =
       Data.loadValidationAndTest("test-data/iris-test.csv");
 
     trainingProps = {
-      trainingFeatureBatches: trainingFeatures,
-      trainingLabelBatches: trainingLabels,
+      trainingFeatureBatches,
+      trainingLabelBatches,
       numberOfHiddenNodes: 2,
       learningRate: 1,
       epochs: 10,
-      showLoss: false,
+      report: false,
       testingFeatures,
       testingLabels,
-      unbatchedTrainingFeatures: unbatchedFeatures,
-      unbatchedTrainingLabels: unbatchedLabels,
+      unbatchedTrainingFeatures,
+      unbatchedTrainingLabels,
     };
   });
 
@@ -52,12 +52,12 @@ describe("train", () => {
     const result = neuralNetwork.train({ ...trainingProps, epochs: 500 });
 
     const { validationFeatures, validationLabels } = Data.loadValidationAndTest(
-      "test-data/iris-test.csv",
+      "test-data/iris-test.csv"
     );
     const results = neuralNetwork.classify(
       validationFeatures,
       result.weights1,
-      result.weights2,
+      result.weights2
     );
 
     expect(results.get()[0][0]).toEqual(validationLabels.get()[0][0]);
@@ -87,7 +87,7 @@ describe("backPropagation", () => {
       labels,
       predictions,
       firstLayerOutput,
-      weight2,
+      weight2
     );
 
     expect(result.weight1Gradient.get()).toEqual([
@@ -118,7 +118,7 @@ describe("backPropagation", () => {
       labels,
       predictions,
       firstLayerOutput,
-      weight2,
+      weight2
     );
 
     const roundedWeight1Gradient = roundMatrix(result.weight1Gradient.get(), 3);
@@ -132,12 +132,9 @@ describe("backPropagation", () => {
   });
 });
 
-describe.skip("forward", () => {
+describe("forward", () => {
   it("should return correct values for predictions and firstLayerOutput", () => {
     const neuralNetwork = new NeuralNetworkTestWrapper();
-    // hidden nodes = 2
-    // classes = 1
-
     const features = new Matrix([
       [1, 2, 3],
       [4, 5, 6],
@@ -151,44 +148,17 @@ describe.skip("forward", () => {
       [1.0, 1.1],
     ]);
 
-    const weight2 = new Matrix([[0.1], [0.2], [0.3]]);
-
-    /*
-    First Layer Output
-    features + bias = 3 x 4
-    weight1 = 4 x 2
-    result = 3 x 2
-
-    [1, 1, 2, 3]     [0.1, 0.2]    [4.9, 5.6]
-    [1, 4, 5, 6]  X  [0.4, 0.5]  = [11.2, 12.8]
-    [1, 7, 8, 9]     [0.7, 0.8]    [17.5, 20]
-                     [1.0, 1.1]  
-                    
-    [4.9, 6.6]                          [0.993, 0.996]              
-    [1, 4, 5, 6]  X  1 / (1 + e^(-x)) = [1, 1]
-    [1, 7, 8, 9]                        [1, 1]
-
-    Predictions
-    First Layer Output + bias = 3 x 3
-    weight2 = 3 x 1
-    result = 3 x 1
-
-    [1, 0.993, 0.996]           [0.1]    [0.597]
-    [1, 1    , 1    ]   X       [0.2]  = [0.6]
-    [1, 1    , 1    ]           [0.3]    [0.6]
-
-    [0.597]                     [0.333]
-    [0.6]    X Softmax      =   [0.334]
-    [0.6]                       [0.334]
-
-    */
+    const weight2 = new Matrix([
+      [0.1, 0.4],
+      [0.2, 0.5],
+      [0.3, 0.6],
+    ]);
 
     const result = neuralNetwork.testForward(features, weight1, weight2);
-
     const roundedPredictions = roundMatrix(result.predictions.get(), 3);
     const roundedFirstLayerOutput = roundMatrix(
       result.firstLayerOutput.get(),
-      3,
+      3
     );
 
     expect(roundedFirstLayerOutput).toEqual([
@@ -196,7 +166,11 @@ describe.skip("forward", () => {
       [1, 1],
       [1, 1],
     ]);
-    expect(roundedPredictions).toEqual([[0.333], [0.334], [0.334]]);
+    expect(roundedPredictions).toEqual([
+      [0.29, 0.71],
+      [0.289, 0.711],
+      [0.289, 0.711],
+    ]);
   });
 });
 
@@ -217,7 +191,7 @@ describe("InitializeWeights", () => {
     const { w1, w2 } = neuralNetwork.testInitializeWeights(
       nInputVariables,
       nHiddenNodes,
-      nClasses,
+      nClasses
     );
 
     expect(w1.get()).toEqual([
@@ -237,14 +211,14 @@ class NeuralNetworkTestWrapper extends NeuralNetwork {
     labels: Matrix,
     predictions: Matrix,
     firstLayerOutput: Matrix,
-    weight2: Matrix,
+    weight2: Matrix
   ) {
     return this.backPropagation(
       features,
       labels,
       predictions,
       firstLayerOutput,
-      weight2,
+      weight2
     );
   }
 
@@ -255,23 +229,23 @@ class NeuralNetworkTestWrapper extends NeuralNetwork {
   public testInitializeWeights(
     nInputVariables: number,
     nHiddenNodes: number,
-    nClasses: number,
+    nClasses: number
   ) {
     return this.initializeWeights(nInputVariables, nHiddenNodes, nClasses);
   }
 }
 
-describe.skip("mnist", () => {
+describe("mnist", () => {
   let trainingProps: TrainingProps;
   let validationData;
 
   beforeAll(() => {
     const mnist = new Mnist();
     const {
-      trainingFeatures,
-      trainingLabels,
-      unbatchedFeatures,
-      unbatchedLabels,
+      trainingFeatureBatches,
+      trainingLabelBatches,
+      unbatchedTrainingFeatures,
+      unbatchedTrainingLabels,
       testingFeatures,
       testingLabels,
       validationFeatures,
@@ -281,20 +255,20 @@ describe.skip("mnist", () => {
       "test-data/mnist/train-labels-idx1-ubyte",
       "test-data/mnist/t10k-images-idx3-ubyte",
       "test-data/mnist/t10k-labels-idx1-ubyte",
-      1000,
+      1000
     );
 
     trainingProps = {
-      trainingFeatureBatches: trainingFeatures,
-      trainingLabelBatches: trainingLabels,
+      trainingFeatureBatches,
+      trainingLabelBatches,
       numberOfHiddenNodes: 25,
       learningRate: 0.8,
       epochs: 25,
-      showLoss: true,
+      report: true,
       testingFeatures,
       testingLabels,
-      unbatchedTrainingFeatures: unbatchedFeatures,
-      unbatchedTrainingLabels: unbatchedLabels,
+      unbatchedTrainingFeatures,
+      unbatchedTrainingLabels,
     };
 
     validationData = {
@@ -311,27 +285,24 @@ describe.skip("mnist", () => {
 
     expect(loss1).toBeGreaterThan(loss2);
     expect(loss2).toBeGreaterThan(loss3);
-  }, 100000);
+  }, 1000);
 
   it("should correctly predict", async () => {
     const neuralNet = new NeuralNetwork();
-    const { weights1, weights2 } = neuralNet.train({
-      ...trainingProps,
-      epochs: 5,
-    });
+    const { weights1, weights2 } = neuralNet.train(trainingProps);
     const result = neuralNet.classify(
       validationData.validationFeatures,
       weights1,
-      weights2,
+      weights2
     );
     expect(result.get()[0][0]).toEqual(
-      validationData.validationLabels.get()[0][0],
+      validationData.validationLabels.get()[0][0]
     );
     expect(result.get()[1][0]).toEqual(
-      validationData.validationLabels.get()[1][0],
+      validationData.validationLabels.get()[1][0]
     );
     expect(result.get()[2][0]).toEqual(
-      validationData.validationLabels.get()[2][0],
+      validationData.validationLabels.get()[2][0]
     );
   }, 100000);
 });

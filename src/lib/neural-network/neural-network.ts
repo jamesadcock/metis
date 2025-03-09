@@ -19,7 +19,7 @@ export class NeuralNetwork {
       numberOfHiddenNodes,
       learningRate,
       epochs,
-      showLoss: report,
+      report,
       testingFeatures,
       testingLabels,
       unbatchedTrainingFeatures: unbatchedFeatures,

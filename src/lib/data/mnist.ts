@@ -28,13 +28,13 @@ export class Mnist extends BaseData {
       const featuresMatrix = new Matrix(features);
       const trainingLabels = Mnist.oneHotEncode(labels);
       return {
-        trainingFeatures: [featuresMatrix],
-        trainingLabels: [trainingLabels],
+        trainingFeatureBatches: [featuresMatrix],
+        trainingLabelBatches: [trainingLabels],
         batchSize: 0,
         lastBatchSize: featuresMatrix.rows,
         numberOfBatches: 1,
-        unbatchedFeatures: featuresMatrix,
-        unbatchedLabels: trainingLabels,
+        unbatchedTrainingFeatures: featuresMatrix,
+        unbatchedTrainingLabels: trainingLabels,
         testingFeatures: new Matrix(testingFeatures),
         testingLabels,
         validationFeatures: new Matrix(validationFeatures),
@@ -61,13 +61,15 @@ export class Mnist extends BaseData {
     }
 
     return {
-      trainingFeatures: featuresBatches.map((batch) => new Matrix(batch)),
-      trainingLabels: labelsBatches.map((batch) => Mnist.oneHotEncode(batch)),
+      trainingFeatureBatches: featuresBatches.map((batch) => new Matrix(batch)),
+      trainingLabelBatches: labelsBatches.map((batch) =>
+        Mnist.oneHotEncode(batch)
+      ),
       batchSize,
       lastBatchSize,
       numberOfBatches,
-      unbatchedFeatures: new Matrix(features),
-      unbatchedLabels: Mnist.oneHotEncode(labels),
+      unbatchedTrainingFeatures: new Matrix(features),
+      unbatchedTrainingLabels: Mnist.oneHotEncode(labels),
       testingFeatures: new Matrix(testingFeatures),
       testingLabels,
       validationFeatures: new Matrix(validationFeatures),

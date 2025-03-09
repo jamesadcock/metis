@@ -8,7 +8,7 @@ export class Data extends BaseData {
   public static loadTraining(
     filePath: string,
     batchSize = 0,
-    oneHotEncode = false,
+    oneHotEncode = false
   ): TrainingData {
     try {
       const fileContent = fs.readFileSync(filePath, "utf8");
@@ -40,7 +40,7 @@ export class Data extends BaseData {
 
         for (let i = 0; i < numberOfBatches; i++) {
           featuresBatches.push(
-            features.slice(i * batchSize, (i + 1) * batchSize),
+            features.slice(i * batchSize, (i + 1) * batchSize)
           );
           labelsBatches.push(labels.slice(i * batchSize, (i + 1) * batchSize));
         }
@@ -51,24 +51,26 @@ export class Data extends BaseData {
         }
 
         return {
-          trainingFeatures: featuresBatches.map((batch) => new Matrix(batch)),
-          trainingLabels: labelsBatches.map((batch) => new Matrix(batch)),
+          trainingFeatureBatches: featuresBatches.map(
+            (batch) => new Matrix(batch)
+          ),
+          trainingLabelBatches: labelsBatches.map((batch) => new Matrix(batch)),
           batchSize,
           lastBatchSize,
           numberOfBatches,
-          unbatchedFeatures: featuresMatrix,
-          unbatchedLabels: labelsMatrix,
+          unbatchedTrainingFeatures: featuresMatrix,
+          unbatchedTrainingLabels: labelsMatrix,
         };
       }
 
       return {
-        trainingFeatures: [featuresMatrix],
-        trainingLabels: [labelsMatrix],
+        trainingFeatureBatches: [featuresMatrix],
+        trainingLabelBatches: [labelsMatrix],
         batchSize: 0,
         lastBatchSize: featuresMatrix.rows,
         numberOfBatches: 1,
-        unbatchedFeatures: featuresMatrix,
-        unbatchedLabels: labelsMatrix,
+        unbatchedTrainingFeatures: featuresMatrix,
+        unbatchedTrainingLabels: labelsMatrix,
       };
     } catch (error) {
       throw new Error("Error reading the CSV file");
