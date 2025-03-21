@@ -3,6 +3,7 @@ import { Matrix } from "../functions/matrix";
 import { TrainingData } from "./interfaces";
 import { splitArrayInHalf } from "./utility";
 import { BaseData } from "./base-data";
+import { createCanvas } from "canvas";
 
 export class Mnist extends BaseData {
   public load(
@@ -10,7 +11,7 @@ export class Mnist extends BaseData {
     trainingLabelsPath: string,
     testingImagePath: string,
     testingLabelsPath: string,
-    batchSize = 0,
+    batchSize = 0
   ): TrainingData {
     const { testingLabels, validationLabels } =
       this.loadTestAndValidationLabels(testingLabelsPath);
@@ -63,7 +64,7 @@ export class Mnist extends BaseData {
     return {
       trainingFeatureBatches: featuresBatches.map((batch) => new Matrix(batch)),
       trainingLabelBatches: labelsBatches.map((batch) =>
-        Mnist.oneHotEncode(batch),
+        Mnist.oneHotEncode(batch)
       ),
       batchSize,
       lastBatchSize,
@@ -77,8 +78,23 @@ export class Mnist extends BaseData {
     };
   }
 
+  public loadTestImages() {
+    const { testingFeatures } = this.loadTestAndValidationImages(
+      "test-data/mnist/t10k-images-idx3-ubyte"
+    );
+    const featuresRaw = this.loadImages(
+      "test-data/mnist/train-images-idx3-ubyte"
+    );
+
+    const standardizedImages = this.standardize(
+      featuresRaw,
+      testingFeatures
+    ).testSetStandardized;
+    return new Matrix(standardizedImages);
+  }
+
   // Load images from the specified file and return as a Matrix
-  private loadImages(filename: string) {
+  public loadImages(filename: string) {
     const buffer = this.readBuffer(filename);
     const headerSize = 16; // Header size for image files
     const imageSize = 28 * 28; // Each image is 28x28 pixels
@@ -157,19 +173,39 @@ export class Mnist extends BaseData {
       sumOfSquaredDifferences += Math.pow(flattenedTrainingSet[i] - average, 2);
     }
     const standardDeviation = Math.sqrt(
-      sumOfSquaredDifferences / flattenedTrainingSet.length,
+      sumOfSquaredDifferences / flattenedTrainingSet.length
     );
 
-    const standardizeRow = (row: number[]): number[] => {
-      const standardizedRow: number[] = new Array(row.length);
-      for (let i = 0; i < row.length; i++) {
-        standardizedRow[i] = (row[i] - average) / standardDeviation;
+    const standardizeNumber = (number: number[]): number[] => {
+      const standardizedNumber: number[] = new Array(number.length);
+      for (let i = 0; i < number.length; i++) {
+        standardizedNumber[i] = (number[i] - average) / standardDeviation;
       }
-      return standardizedRow;
+      return standardizedNumber;
     };
 
-    const trainingSetStandardized = trainingSet.map(standardizeRow);
-    const testSetStandardized = testSet.map(standardizeRow);
+    const trainingSetStandardized = trainingSet.map(standardizeNumber);
+    const testSetStandardized = testSet.map(standardizeNumber);
     return { trainingSetStandardized, testSetStandardized };
+  }
+
+  public renderImage(image: number[]) {
+    // Create a canvas for the image
+    const canvas = createCanvas(28, 28);
+    const ctx = canvas.getContext("2d");
+
+    // Draw the first image onto the canvas
+    for (let y = 0; y < 28; y++) {
+      for (let x = 0; x < 28; x++) {
+        const pixel = image[y * 28 + x] * 255; // Scale to 0-255
+        ctx.fillStyle = `rgb(${pixel}, ${pixel}, ${pixel})`;
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+
+    // Save the image to a file
+    const buffer = canvas.toBuffer("image/png");
+    fs.writeFileSync("digit.png", buffer);
+    console.log("Image saved to digit.png");
   }
 }
